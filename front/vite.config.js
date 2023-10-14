@@ -10,4 +10,11 @@ export default defineConfig({
     outDir: '../docs'
   },
   plugins: [vue()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "./src/assets/styles/variables.scss";@import "./src/assets/styles/main.scss";',
+      },
+    },
+  },
 })
