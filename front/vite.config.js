@@ -9,9 +9,9 @@ import {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  //base: '/PPISM/',
+  base: '/PPISM/',
   build: {
-    emptyOutDir:false,
+    emptyOutDir: false,
     outDir: '../docs'
   },
   plugins: [vue()],
