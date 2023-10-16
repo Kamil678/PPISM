@@ -1,11 +1,12 @@
 <template>
   <div class="sidebar">
-    <a href="#" class="logo">
+    <!-- <a href="#" class="logo">
       <i class="bx bx-code-alt"></i>
       <div class="logo-name">
         <span>PPISM</span>
       </div>
-    </a>
+    </a> -->
+    <logo-component />
     <ul class="side-menu">
       <li class="active">
         <router-link to="/" class="router-link"
@@ -21,7 +22,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import LogoComponent from "./LogoComponent.vue";
+</script>
 
 <style lang="scss">
 .sidebar {
@@ -35,32 +38,30 @@
   transition: all 0.3s ease;
   overflow-x: hidden;
 
+  .logo {
+    margin-bottom: 50px;
+  }
+
   &.close {
     width: 60px;
 
-    .logo .bx {
-      min-width: 60px;
-      display: flex;
-      justify-content: center;
-      font-size: 2.2rem;
+    .logo {
+      padding-left: 0;
+
+      .bx {
+        min-width: 60px;
+        display: flex;
+        justify-content: center;
+        font-size: 2.2rem;
+      }
     }
+
     .router-link .bx {
       min-width: calc(60px - ((4px + 6px) * 2));
       display: flex;
       font-size: 1.6rem;
       justify-content: center;
     }
-  }
-
-  .logo {
-    font-size: 24px;
-    font-weight: 700;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    color: $primary;
-    gap: 0 5px;
-    margin-bottom: 50px;
   }
 
   .side-menu {
@@ -73,11 +74,8 @@
       margin-bottom: 10px;
       cursor: pointer;
 
-      &.active {
-        color: $primary;
-        a {
-          color: $primary;
-        }
+      .router-link-active {
+        color: $primary !important;
       }
 
       .router-link {

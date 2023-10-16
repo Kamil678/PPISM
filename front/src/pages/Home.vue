@@ -1,12 +1,10 @@
 <template>
-  <p>Home page</p>
-  <q-btn color="primary" label="Primary" />
+  <div class="page">
+    <p>Home page</p>
+    <q-btn color="primary" label="Primary" />
+  </div>
 </template>
 
 <script setup></script>
 
-<style lang="scss">
-p {
-  color: $color;
-}
-</style>
+<style lang="scss"></style>
