@@ -1,0 +1,57 @@
+<template>
+  <div class="page">
+    <div>
+      <h5 style="margin-bottom: 10px">Buttony:</h5>
+      <div style="display: flex; align-items: center; gap: 0 5px">
+        <button-component>Podstawowy button</button-component>
+        <button-component outline>Button flat</button-component>
+        <button-component flat>Button flat</button-component>
+      </div>
+    </div>
+    <div style="margin-top: 20px">
+      <h5 style="margin-bottom: 10px">Input:</h5>
+      <div style="display: flex; align-items: center; gap: 0 5px">
+        <input-component v-model="inputValue" placeholder="Placeholder"
+          >Label</input-component
+        >
+      </div>
+    </div>
+    <div style="margin-top: 20px">
+      <h5 style="margin-bottom: 10px">Select:</h5>
+      <div style="display: flex; align-items: center; gap: 0 5px">
+        <select-component
+          v-model="selectValue"
+          :options-list="optionsToSelect"
+          is-filter
+          >Label</select-component
+        >
+      </div>
+    </div>
+    <div style="margin-top: 20px">
+      <h5 style="margin-bottom: 10px">Multiple select:</h5>
+      <div style="display: flex; align-items: center; gap: 0 5px">
+        <multiple-select-component
+          v-model="multipleSelectValue"
+          :options-list="optionsToSelect"
+          is-filter
+          >Label</multiple-select-component
+        >
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import ButtonComponent from "../components/ButtonComponent.vue";
+import InputComponent from "../components/InputComponent.vue";
+import SelectComponent from "../components/SelectComponent.vue";
+import MultipleSelectComponent from "../components/MultipleSelectComponent.vue";
+
+const inputValue = ref("");
+const selectValue = ref("");
+const optionsToSelect = ["Option 1", "Option 2", "Option 3"];
+const multipleSelectValue = ref([]);
+</script>
+
+<style lang="scss"></style>
