@@ -1,7 +1,6 @@
 <template>
   <div class="page">
-    <p>Home page</p>
-    <q-btn color="primary" label="Primary" />
+    <p>Strona główna</p>
   </div>
 </template>
 

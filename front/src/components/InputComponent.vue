@@ -20,12 +20,14 @@ defineProps({
 
 <style lang="scss">
 .basic-input {
+  width: 100%;
   .label {
     color: $dark;
     font-weight: 500;
   }
 
   .q-field {
+    width: 100%;
     .q-field__control {
       background-color: $light;
       height: 40px;
@@ -33,6 +35,23 @@ defineProps({
       &::before {
         border: 2px solid $dark;
       }
+    }
+  }
+
+  .q-textarea.q-field {
+    .q-field__control {
+      background-color: $light;
+      min-height: 40px;
+      height: auto;
+
+      // &::before {
+      //   border: 2px solid $dark;
+      // }
+    }
+
+    .q-field__native {
+      padding-top: 10px;
+      min-height: 40px;
     }
   }
 }

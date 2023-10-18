@@ -24,6 +24,7 @@ const props = defineProps({
 
 <style lang="scss">
 .basic-select {
+  width: 100%;
   .label {
     color: $dark;
     font-weight: 500;

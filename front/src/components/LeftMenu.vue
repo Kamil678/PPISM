@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <div :class="closeMenu ? 'sidebar close' : 'sidebar'">
     <!-- <a href="#" class="logo">
       <i class="bx bx-code-alt"></i>
       <div class="logo-name">
@@ -24,6 +24,10 @@
 
 <script setup>
 import LogoComponent from "./LogoComponent.vue";
+
+defineProps({
+  closeMenu: Boolean,
+});
 </script>
 
 <style lang="scss">
@@ -57,10 +61,16 @@ import LogoComponent from "./LogoComponent.vue";
     }
 
     .router-link .bx {
-      min-width: calc(60px - ((4px + 6px) * 2));
+      min-width: 60px;
       display: flex;
       font-size: 1.6rem;
       justify-content: center;
+    }
+
+    .side-menu {
+      li {
+        padding: 0;
+      }
     }
   }
 

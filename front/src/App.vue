@@ -1,6 +1,6 @@
-<template>
-  <left-menu />
-  <top-menu />
+<template >
+  <left-menu :close-menu="closeLeftMenu" />
+  <top-menu @click-hide-menu="closeLeftMenu = !closeLeftMenu" />
   <router-view />
 </template>
 <script setup>

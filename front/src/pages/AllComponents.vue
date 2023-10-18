@@ -9,9 +9,28 @@
       </div>
     </div>
     <div style="margin-top: 20px">
+      <h5 style="margin-bottom: 10px">Button z ikoną:</h5>
+      <div style="display: flex; align-items: center; gap: 0 5px">
+        <button-with-icon is-tooltip tooltip-text="Opis co robi">
+          <i class="bx bx-menu"></i>
+        </button-with-icon>
+      </div>
+    </div>
+    <div style="margin-top: 20px">
       <h5 style="margin-bottom: 10px">Input:</h5>
       <div style="display: flex; align-items: center; gap: 0 5px">
         <input-component v-model="inputValue" placeholder="Placeholder"
+          >Label</input-component
+        >
+      </div>
+    </div>
+    <div style="margin-top: 20px">
+      <h5 style="margin-bottom: 10px">Textarea:</h5>
+      <div style="display: flex; align-items: center; gap: 0 5px">
+        <input-component
+          type="textarea"
+          v-model="textareaValue"
+          placeholder="Placeholder"
           >Label</input-component
         >
       </div>
@@ -38,6 +57,12 @@
         >
       </div>
     </div>
+    <div style="margin-top: 20px">
+      <h5 style="margin-bottom: 10px">Tooltip:</h5>
+      <div style="display: flex; align-items: center; gap: 0 5px">
+        <tooltip-component tooltip-text="Tooltip tekst" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -47,8 +72,11 @@ import ButtonComponent from "../components/ButtonComponent.vue";
 import InputComponent from "../components/InputComponent.vue";
 import SelectComponent from "../components/SelectComponent.vue";
 import MultipleSelectComponent from "../components/MultipleSelectComponent.vue";
+import TooltipComponent from "../components/TooltipComponent.vue";
+import ButtonWithIcon from "../components/ButtonWithIcon.vue";
 
 const inputValue = ref("");
+const textareaValue = ref("");
 const selectValue = ref("");
 const optionsToSelect = ["Option 1", "Option 2", "Option 3"];
 const multipleSelectValue = ref([]);
