@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-select">
+  <div class="basic-multiple-select">
     <span class="label">
       <slot></slot>
     </span>
@@ -23,7 +23,8 @@ const props = defineProps({
 </script>
 
 <style lang="scss">
-.basic-select {
+.basic-multiple-select {
+  width: 100%;
   .label {
     color: $dark;
     font-weight: 500;

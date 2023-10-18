@@ -8,7 +8,7 @@
 
 <style lang="scss">
 .basic-button.q-btn {
-  height: 36px;
+  height: auto;
   padding: 5px 16px;
   border-radius: 10px;
   background: $primary;

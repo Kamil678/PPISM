@@ -32,6 +32,13 @@ li{
     transition: all 0.3s ease;
 }
 
+#app:has(.close){
+    .page, .top-menu{
+        width: calc(100% - 60px);
+        left: 60px;
+    }
+}
+
 .page{
     padding: 20px;
 }
