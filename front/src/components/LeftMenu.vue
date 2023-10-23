@@ -19,6 +19,14 @@
         >
       </li>
     </ul>
+    <ul class="side-menu" style="margin-top: 50px">
+      <li>
+        <a href="#" class="logout">
+          <i class="bx bx-log-out-circle"></i>
+          Wyloguj się
+        </a>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -60,7 +68,8 @@ defineProps({
       }
     }
 
-    .router-link .bx {
+    .router-link .bx,
+    a .bx {
       min-width: 60px;
       display: flex;
       font-size: 1.6rem;
@@ -88,7 +97,8 @@ defineProps({
         color: $primary !important;
       }
 
-      .router-link {
+      .router-link,
+      .logout {
         display: flex;
         align-items: center;
         gap: 0 5px;
@@ -98,6 +108,10 @@ defineProps({
         color: $dark;
         overflow-x: hidden;
         transition: all 0.3s ease;
+      }
+
+      .logout {
+        color: $danger;
       }
     }
   }

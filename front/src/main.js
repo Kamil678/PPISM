@@ -13,5 +13,5 @@ import 'quasar/src/css/index.sass'
 
 
 createApp(App).use(router).use(Quasar, {
-    plugins: {},
+    plugins: ['Notify']
 }).mount('#app')

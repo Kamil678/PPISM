@@ -3,35 +3,54 @@
     <div :class="isSignIn ? 'sign-up-form active-sign-in' : 'sign-up-form'">
       <form>
         <h1>Stwórz konto</h1>
-        <input-component type="text" placeholder="Wpisz imię"
+        <input-component v-model="name" type="text" placeholder="Wpisz imię"
           >Imię:</input-component
         >
-        <input-component type="text" placeholder="Wpisz nazwisko"
+        <input-component
+          v-model="surname"
+          type="text"
+          placeholder="Wpisz nazwisko"
           >Nazwisko:</input-component
         >
-        <input-component placeholder="Podaj email" type="email"
+        <input-component v-model="email" placeholder="Podaj email" type="email"
           >Email:</input-component
         >
-        <input-component type="password" placeholder="Podaj hasło"
+        <input-component
+          v-model="password"
+          type="password"
+          placeholder="Podaj hasło"
           >Hasło:</input-component
         >
-        <input-component type="password" placeholder="Powtórz hasło"
+        <!-- <input-component
+          v-model="repeatPassword"
+          type="password"
+          placeholder="Powtórz hasło"
           >Powtórz hasło:</input-component
+        > -->
+        <button-component @click="submitRegisterForm"
+          >Utwórz konto</button-component
         >
-        <button-component>Utwórz konto</button-component>
         <a href="#" @click="isSignIn = true">Masz już konto? Zaloguj sie</a>
       </form>
     </div>
     <div :class="isSignIn ? 'sign-in-form' : 'sign-in-form active-sign-in'">
       <form>
         <h1>Zaloguj się</h1>
-        <input-component placeholder="Podaj email" type="email"
+        <input-component
+          v-model="loginEmail"
+          placeholder="Podaj email"
+          type="email"
           >Email:</input-component
         >
-        <input-component type="password" placeholder="Podaj hasło"
+        <input-component
+          v-model="loginPassword"
+          type="password"
+          placeholder="Podaj hasło"
           >Hasło:</input-component
         >
-        <button-component>Zaloguj się</button-component>
+        <button-component @click="submitLoginForm"
+          >Zaloguj się</button-component
+        >
         <a href="#" @click="isSignIn = false"
           >Nie posiadasz jeszcze konta? Utwórz konto</a
         >
@@ -66,22 +85,94 @@
 
 <script setup>
 import { ref } from "vue";
+import axios from "axios";
 import InputComponent from "../components/InputComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
+//import { showErrorNotification } from "../services/Notifications";
 
 const isSignIn = ref(true);
+
+//data to register
+const name = ref("");
+const surname = ref("");
+const email = ref("");
+const password = ref("");
+const repeatPassword = ref("");
+
+//data to login
+const loginEmail = ref("");
+const loginPassword = ref("");
+
+const submitLoginForm = () => {
+  if (validateLoginForm()) {
+    console.log("Submit login");
+  } else {
+    console.log("Masz błedy");
+  }
+};
+
+const submitRegisterForm = () => {
+  if (validateRegisterForm()) {
+    const newUser = {
+      name: name.value,
+      surname: surname.value,
+      email: email.value,
+      password: password.value,
+    };
+    axios.put(import.meta.env.VITE_SIGNUP_USER, newUser);
+  } else {
+    console.log("Errors");
+  }
+};
+
+const validateLoginForm = () => {
+  if (
+    loginEmail.value === "" ||
+    !loginEmail.value.includes("@") ||
+    loginPassword.value === ""
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const validateRegisterForm = () => {
+  if (
+    name.value === "" ||
+    surname.value === "" ||
+    email.value === "" ||
+    !email.value.includes("@") ||
+    password.value === ""
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+};
 </script>
 
 <style lang="scss">
 .form-container {
   width: 900px;
   max-width: 100%;
-  min-height: 600px;
+  min-height: 100vh;
   position: relative;
   background: $light;
   border-radius: 10px;
   max-width: 100%;
   box-shadow: 0px 0px 2px -1px rgba(54, 57, 73, 1);
+
+  @media (min-width: 768px) {
+    margin: 0 20px;
+    min-height: 700px;
+  }
+
+  @media (min-width: 1024px) {
+    margin: 0 auto;
+    width: 900px;
+    min-height: 600px;
+  }
 
   .active-sign-in {
     display: none;
@@ -100,10 +191,15 @@ const isSignIn = ref(true);
 
   .sign-up-form,
   .sign-in-form {
+    width: 100%;
     position: absolute;
     top: 0;
     height: 100%;
     transition: all 0.6s ease-in-out;
+
+    @media (min-width: 768px) {
+      width: 50%;
+    }
 
     form {
       display: flex;
@@ -129,6 +225,7 @@ const isSignIn = ref(true);
 }
 
 .toggle-container {
+  display: none;
   position: absolute;
   top: 0;
   left: 50%;
@@ -137,6 +234,10 @@ const isSignIn = ref(true);
   overflow: hidden;
   transition: all 0.6s ease-in-out;
   border-radius: 150px 10px 10px 100px;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
 
   .toggle {
     background-color: $primary;
