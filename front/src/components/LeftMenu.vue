@@ -21,7 +21,7 @@
     </ul>
     <ul class="side-menu" style="margin-top: 50px">
       <li>
-        <a href="#" class="logout">
+        <a href="#" class="logout" @click="logout">
           <i class="bx bx-log-out-circle"></i>
           Wyloguj się
         </a>
@@ -32,6 +32,15 @@
 
 <script setup>
 import LogoComponent from "./LogoComponent.vue";
+import { useUserStore } from "../store/user";
+import router from "../router";
+
+const userStore = useUserStore();
+
+const logout = () => {
+  userStore.logout();
+  router.push("/auth");
+};
 
 defineProps({
   closeMenu: Boolean,

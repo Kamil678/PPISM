@@ -3,8 +3,8 @@ import axios from "axios";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    user: null,
-    token: null,
+    user: JSON.parse(localStorage.getItem("user")),
+    token: JSON.parse(localStorage.getItem("token")),
   }),
 
   actions: {
@@ -18,9 +18,23 @@ export const useUserStore = defineStore("user", {
       await axios.put(import.meta.env.VITE_SIGNUP_USER, newUser);
     },
     async signIn(email, password) {
-      const res = await axios.post(import.meta.env.VITE_BASE_URL + "auth/login", { email: email, password: password });
+      const res = await axios.post(
+        import.meta.env.VITE_BASE_URL + "auth/login",
+        { email: email, password: password }
+      );
       this.token = res.data.token;
       this.user = res.data.user;
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("token", JSON.stringify(res.data.token));
     },
+    logout() {
+      this.token = null;
+      this.user = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    },
+  },
+  getters: {
+    isAuth: (state) => !!state.token,
   },
 });
