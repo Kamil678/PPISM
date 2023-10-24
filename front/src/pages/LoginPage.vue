@@ -3,33 +3,23 @@
     <div :class="isSignIn ? 'sign-up-form active-sign-in' : 'sign-up-form'">
       <form>
         <h1>Stwórz konto</h1>
-        <input-component v-model="name" type="text" placeholder="Wpisz imię"
-          >Imię:</input-component
-        >
+        <input-component v-model="name" type="text" placeholder="Wpisz imię">Imię:</input-component>
         <input-component
           v-model="surname"
           type="text"
-          placeholder="Wpisz nazwisko"
-          >Nazwisko:</input-component
-        >
-        <input-component v-model="email" placeholder="Podaj email" type="email"
-          >Email:</input-component
-        >
+          placeholder="Wpisz nazwisko">Nazwisko:</input-component>
+        <input-component v-model="email" placeholder="Podaj email" type="email">Email:</input-component>
         <input-component
           v-model="password"
           type="password"
-          placeholder="Podaj hasło"
-          >Hasło:</input-component
-        >
+          placeholder="Podaj hasło">Hasło:</input-component>
         <!-- <input-component
           v-model="repeatPassword"
           type="password"
           placeholder="Powtórz hasło"
           >Powtórz hasło:</input-component
         > -->
-        <button-component @click="submitRegisterForm"
-          >Utwórz konto</button-component
-        >
+        <button-component @click="submitRegisterForm">Utwórz konto</button-component>
         <a href="#" @click="isSignIn = true">Masz już konto? Zaloguj sie</a>
       </form>
     </div>
@@ -39,44 +29,30 @@
         <input-component
           v-model="loginEmail"
           placeholder="Podaj email"
-          type="email"
-          >Email:</input-component
-        >
+          type="email">Email:</input-component>
         <input-component
           v-model="loginPassword"
           type="password"
-          placeholder="Podaj hasło"
-          >Hasło:</input-component
-        >
-        <button-component @click="submitLoginForm"
-          >Zaloguj się</button-component
-        >
-        <a href="#" @click="isSignIn = false"
-          >Nie posiadasz jeszcze konta? Utwórz konto</a
-        >
+          placeholder="Podaj hasło">Hasło:</input-component>
+        <button-component @click="submitLoginForm">Zaloguj się</button-component>
+        <a href="#" @click="isSignIn = false">Nie posiadasz jeszcze konta? Utwórz konto</a>
       </form>
     </div>
     <div class="toggle-container">
       <div class="toggle">
         <div
           class="toggle-panel toggle-sign-in"
-          :style="!isSignIn ? 'transform:translate(0,-50%)' : ''"
-        >
+          :style="!isSignIn ? 'transform:translate(0,-50%)' : ''">
           <h2>Witaj ponownie!</h2>
           <p>Zaloguj się aby zobaczyć swoje projekty</p>
-          <button-component outline @click="isSignIn = true"
-            >Zaloguj się</button-component
-          >
+          <button-component outline @click="isSignIn = true">Zaloguj się</button-component>
         </div>
         <div
           class="toggle-panel toggle-sign-up"
-          :style="!isSignIn ? 'transform:translate(-200%,-50%)' : ''"
-        >
+          :style="!isSignIn ? 'transform:translate(-200%,-50%)' : ''">
           <h2>Witaj!</h2>
           <p>Zarejestruj się aby w pełni korzystać z sytemu</p>
-          <button-component outline @click="isSignIn = false"
-            >Zarajestruj się</button-component
-          >
+          <button-component outline @click="isSignIn = false">Zarajestruj się</button-component>
         </div>
       </div>
     </div>
@@ -85,10 +61,12 @@
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
 import InputComponent from "../components/InputComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
 //import { showErrorNotification } from "../services/Notifications";
+import { useUserStore } from '../store/user'
+
+const userStore = useUserStore()
 
 const isSignIn = ref(true);
 
@@ -97,29 +75,23 @@ const name = ref("");
 const surname = ref("");
 const email = ref("");
 const password = ref("");
-const repeatPassword = ref("");
 
 //data to login
 const loginEmail = ref("");
 const loginPassword = ref("");
 
-const submitLoginForm = () => {
+const submitLoginForm = async () => {
   if (validateLoginForm()) {
-    console.log("Submit login");
+    await userStore.signIn(loginEmail.value, loginPassword.value)
   } else {
     console.log("Masz błedy");
   }
 };
 
-const submitRegisterForm = () => {
+const submitRegisterForm = async () => {
   if (validateRegisterForm()) {
-    const newUser = {
-      name: name.value,
-      surname: surname.value,
-      email: email.value,
-      password: password.value,
-    };
-    axios.put(import.meta.env.VITE_SIGNUP_USER, newUser);
+    await userStore.signUp(name.value, surname.value, email.value, password.value)
+    isSignIn.value = true
   } else {
     console.log("Errors");
   }
