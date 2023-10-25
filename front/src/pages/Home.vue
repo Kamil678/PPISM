@@ -4,6 +4,13 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import axios from 'axios';
+import createInstance from '../services/apiBase';
+
+const instance = createInstance()
+const response = instance.get('/test')
+console.log(response)
+</script>
 
 <style lang="scss"></style>

@@ -9,14 +9,13 @@
     <logo-component />
     <ul class="side-menu">
       <li class="active">
-        <router-link to="/" class="router-link"
-          ><i class="bx bx-home"></i>Storna główna</router-link
-        >
+        <router-link to="/" class="router-link"><i class="bx bx-home"></i>Storna główna</router-link>
       </li>
       <li>
-        <router-link to="/all-components" class="router-link"
-          ><i class="bx bxs-component"></i>Komponenty</router-link
-        >
+        <router-link to="/projects" class="router-link"><i class='bx bx-book-open'></i>Projekty</router-link>
+      </li>
+      <li>
+        <router-link to="/all-components" class="router-link"><i class="bx bxs-component"></i>Komponenty</router-link>
       </li>
     </ul>
     <ul class="side-menu" style="margin-top: 50px">
