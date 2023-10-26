@@ -19,7 +19,13 @@ function createInstance() {
       return response;
     },
     async (error) => {
-      if (error.response.status === 401 || error.response.status === 500) {
+      if (error.response.status === 401 ) {
+        userStore.clearToken();
+        userStore.clearUser();
+        window.location.href = "/auth";
+      }
+      
+       if (error.response.data.message === 'jwt expired' ) {
         userStore.clearToken();
         userStore.clearUser();
         window.location.href = "/auth";

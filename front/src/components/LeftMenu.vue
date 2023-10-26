@@ -9,13 +9,19 @@
     <logo-component />
     <ul class="side-menu">
       <li class="active">
-        <router-link to="/" class="router-link"><i class="bx bx-home"></i>Storna główna</router-link>
+        <router-link to="/home" class="router-link"
+          ><i class="bx bx-home"></i>Storna główna</router-link
+        >
       </li>
       <li>
-        <router-link to="/projects" class="router-link"><i class='bx bx-book-open'></i>Projekty</router-link>
+        <router-link to="/projects" class="router-link"
+          ><i class="bx bx-book-open"></i>Projekty</router-link
+        >
       </li>
       <li>
-        <router-link to="/all-components" class="router-link"><i class="bx bxs-component"></i>Komponenty</router-link>
+        <router-link to="/all-components" class="router-link"
+          ><i class="bx bxs-component"></i>Komponenty</router-link
+        >
       </li>
     </ul>
     <ul class="side-menu" style="margin-top: 50px">
@@ -51,7 +57,7 @@ defineProps({
   position: fixed;
   top: 0;
   left: 0;
-  background: $light;
+  background: $dark;
   width: 250px;
   height: 100%;
   z-index: 1000;
@@ -78,6 +84,7 @@ defineProps({
 
     .router-link .bx,
     a .bx {
+      color: $light;
       min-width: 60px;
       display: flex;
       font-size: 1.6rem;
@@ -116,6 +123,10 @@ defineProps({
         color: $dark;
         overflow-x: hidden;
         transition: all 0.3s ease;
+      }
+
+      .router-link {
+        color: $light;
       }
 
       .logout {

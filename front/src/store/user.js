@@ -33,7 +33,7 @@ export const useUserStore = defineStore("user", {
     clearToken() {
       this.token = null;
       localStorage.removeItem("token");
-      clearTokens();
+      //clearTokens();
     },
     clearUser() {
       this.user = null;
