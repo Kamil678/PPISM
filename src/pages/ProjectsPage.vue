@@ -5,47 +5,37 @@
       <button-component
         outline
         @click="router.replace('/add-project')"
-        class="add-project-btn">Stwórz projekt</button-component>
+        class="add-project-btn"
+        >Stwórz projekt</button-component
+      >
     </div>
     <basic-table
       :hide-bottom="projects.length > 0"
       :rows="projects"
       :columns="columns"
-      class="projects-table">
+      class="projects-table"
+    >
       <template v-slot:no-data="{ icon, message, filter }">
         <div class="full-width row flex-center q-gutter-sm q-py-lg">
           Brak danych
         </div>
       </template>
-      <!-- <template v-slot:header-cell-recipientsGroup="props">
-        <q-th :props="props">
-          Grupa<br />Odbiorców
-          <q-u-tooltip
-            tooltip-text="Informacja, do kogo kierowana jest ankieta (lekarze/przedstawiciele)"
-          />
-        </q-th>
-      </template>
-      <template v-slot:header-cell-targetGroup="props">
-        <q-th :props="props">
-          Grupa<br />docelowa
-          <q-u-tooltip
-            tooltip-text="Linia przedstawicieli, do której kierowana jest ankieta"
-          />
-        </q-th>
-      </template>
-      <template v-slot:header-cell-answersCount="props">
-        <q-th :props="props"> Liczba<br />wypełnień </q-th>
-      </template> -->
-      <!-- <template v-slot:body-cell-title="props">
-    </template> -->
-
       <template v-slot:body-cell-status="props">
         <q-td>
           <q-btn-dropdown
             unelevated
-            :style="`color:#fff; background:${colorTextStatusMap[props.row.status.name]};`"
-            :label="props.row.status.name === 'NEW' ? 'Nowy' : props.row.status.name === 'INPROGRES' ? 'W trakcie realizacji' : 'Ukończony'"
-            class="status-btn">
+            :style="`color:#fff; background:${
+              colorTextStatusMap[props.row.status.name]
+            };`"
+            :label="
+              props.row.status.name === 'NEW'
+                ? 'Nowy'
+                : props.row.status.name === 'INPROGRES'
+                ? 'W trakcie realizacji'
+                : 'Ukończony'
+            "
+            class="status-btn"
+          >
             <q-list>
               <q-item
                 dense
@@ -53,14 +43,15 @@
                 :key="`${slug}-${props.row.id}`"
                 clickable
                 v-close-popup
-                @click="e => showModal(slug, props.row)">
+                @click="(e) => showModal(slug, props.row)"
+              >
                 <q-item-section>
                   <q-item-label>{{ getNameBySlug(slug) }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
           </q-btn-dropdown>
-          <q-dialog
+          <!-- <q-dialog
             :model-value="confirmStatusModal"
             persistent>
             <q-card style="padding: 30px;">
@@ -78,7 +69,14 @@
                   @click="changeStatus(props.row._id)">Zmień status</button-component>
               </q-card-actions>
             </q-card>
-          </q-dialog>
+          </q-dialog> -->
+          <confirm-modal
+            v-model="confirmStatusModal"
+            btn-text="Zmień status"
+            modal-text="Czy na pewno chcesz zmienić status?"
+            @click-cancel="confirmStatusModal = false"
+            @click-confirm="changeStatus(props.row._id)"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-actions="props">
@@ -88,24 +86,33 @@
               is-tooltip
               tooltip-text="Edytuj projekt"
               @click="router.replace('/add-project?id=' + props.row._id)"
-              class="hide-menu">
+              class="hide-menu"
+            >
               <img
                 src="../assets/ic_edit.svg"
                 style="width: 18px; height: 18px"
-                alt="edit" />
+                alt="edit"
+              />
             </button-with-icon>
             <button-with-icon
               is-tooltip
               tooltip-text="Usuń projekt"
               @click="isDelete = true"
-              class="hide-menu">
+              class="hide-menu"
+            >
               <img
                 src="../assets/trash-ico.svg"
                 style="width: 18px; height: 18px"
-                alt="edit" />
+                alt="edit"
+              />
             </button-with-icon>
-            <confirm-modal v-model="isDelete" btn-text="Usuń" modal-text="Czy na pewno chcesz usunąć ten projekt?" @click-cancel="isDelete = false"
-              @click-confirm="confirmDeleteProject(props.row._id)" />
+            <confirm-modal
+              v-model="isDelete"
+              btn-text="Usuń"
+              modal-text="Czy na pewno chcesz usunąć ten projekt?"
+              @click-cancel="isDelete = false"
+              @click-confirm="confirmDeleteProject(props.row._id)"
+            />
           </div>
         </q-td>
       </template>
@@ -122,11 +129,11 @@ import createInstance from "../services/apiBase";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import { useQuasar } from "quasar";
 
-const $q = useQuasar()
+const $q = useQuasar();
 const projects = ref([]);
 
 onMounted(async () => {
-  await getProjects()
+  await getProjects();
 });
 
 const getProjects = async () => {
@@ -137,7 +144,7 @@ const getProjects = async () => {
   } catch (err) {
     console.log(err);
   }
-}
+};
 
 const columns = [
   {
@@ -187,8 +194,8 @@ const columns = [
   },
 ];
 
-const confirmStatusModal = ref(false)
-const userSelectedData = ref({ name: '', id: null });
+const confirmStatusModal = ref(false);
+const userSelectedData = ref({ name: "", id: null });
 
 function showModal(slug, { id }) {
   confirmStatusModal.value = true;
@@ -198,21 +205,24 @@ function showModal(slug, { id }) {
 
 async function changeStatus(id) {
   try {
-    const instance = createInstance()
-    await instance.put(`/project/status/${id}`, { id: userSelectedData.value.id, name: userSelectedData.value.name });
+    const instance = createInstance();
+    await instance.put(`/project/status/${id}`, {
+      id: userSelectedData.value.id,
+      name: userSelectedData.value.name,
+    });
     confirmStatusModal.value = false;
-    await getProjects()
+    await getProjects();
     $q.notify({
       position: "top-right",
-      message: 'Pomyślnie zmieniono status',
-      color: 'green'
-    })
+      message: "Pomyślnie zmieniono status",
+      color: "green",
+    });
   } catch (e) {
     $q.notify({
       position: "top-right",
-      message: 'Nie udało się zmienić statusu',
-      color: 'red'
-    })
+      message: "Nie udało się zmienić statusu",
+      color: "red",
+    });
   }
 }
 
@@ -225,46 +235,46 @@ const colorTextStatusMap = {
 const statusMap = [
   {
     id: 1,
-    name: 'NEW'
+    name: "NEW",
   },
   {
     id: 2,
-    name: 'INPROGRES'
+    name: "INPROGRES",
   },
   {
     id: 3,
-    name: 'FINISHED'
+    name: "FINISHED",
   },
-]
+];
 
 function getNameBySlug(slug) {
-  if (slug.name === 'NEW') {
-    return 'Nowy'
+  if (slug.name === "NEW") {
+    return "Nowy";
   }
-  if (slug.name === 'INPROGRES') {
-    return 'W trakcie realizacji'
+  if (slug.name === "INPROGRES") {
+    return "W trakcie realizacji";
   }
-  if (slug.name === 'FINISHED') {
-    return 'Ukończony'
+  if (slug.name === "FINISHED") {
+    return "Ukończony";
   }
 }
 
 const onclickEditProject = (id) => {
-  console.log('Click edit project', id)
-}
+  console.log("Click edit project", id);
+};
 
-const isDelete = ref(false)
+const isDelete = ref(false);
 
 const confirmDeleteProject = async (id) => {
   try {
-    const instance = createInstance()
-    instance.delete('project/' + id)
-    isDelete.value = false
-    await getProjects()
+    const instance = createInstance();
+    instance.delete("project/" + id);
+    isDelete.value = false;
+    await getProjects();
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
-}
+};
 </script>
 <style lang="scss">
 .projects-page {
@@ -282,7 +292,6 @@ const confirmDeleteProject = async (id) => {
 }
 
 .projects-table {
-
   th,
   td {
     border-bottom: none;

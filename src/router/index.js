@@ -6,6 +6,7 @@ import AuthLayout from "../layouts/AuthLayout.vue";
 import MainLayout from "../layouts/MainLayout.vue";
 import ProjectsPage from "../pages/ProjectsPage.vue";
 import AddProject from "../pages/AddProject.vue";
+import User from '../pages/UserPage.vue'
 import { useUserStore } from "../store/user";
 
 const routes = [
@@ -35,6 +36,11 @@ const routes = [
         path: "/add-project",
         name: "add-project",
         component: AddProject,
+      },
+       {
+        path: "/user",
+        name: "user",
+        component: User,
       },
     ],
   },

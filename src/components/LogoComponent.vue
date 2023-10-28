@@ -1,5 +1,5 @@
 <template>
-  <router-link to="/" class="logo">
+  <router-link to="/home" class="logo">
     <i class="bx bx-code-alt"></i>
     <div class="logo-name">
       <span>PPISM</span>
