@@ -64,7 +64,7 @@ router.beforeEach(function (to, from, next) {
   if (to.meta.requiresAuth && !userStore.isAuth) {
     next("/auth");
   } else if (to.meta.requiresUnauth && userStore.isAuth) {
-    next("/");
+    next("/home");
   } else {
     next();
   }

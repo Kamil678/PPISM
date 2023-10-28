@@ -8,10 +8,11 @@ export const useUserStore = defineStore("user", {
   }),
 
   actions: {
-    async signUp(name, surname, email, password) {
+    async signUp(name, surname, role, email, password) {
       const newUser = {
         name: name,
         surname: surname,
+        role: { id: role.value, name: role.label },
         email: email,
         password: password,
       };

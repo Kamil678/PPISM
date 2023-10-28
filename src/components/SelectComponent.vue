@@ -9,15 +9,14 @@
       @update:modelValue="(value) => $emit('update:modelValue', v)"
       v-bind="$attrs"
       label="Wybierz"
-      outlined
-    />
+      outlined />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 const props = defineProps({
-  modelValue: String,
+  modelValue: String || Object,
   optionsList: Array,
 });
 </script>
@@ -25,6 +24,7 @@ const props = defineProps({
 <style lang="scss">
 .basic-select {
   width: 100%;
+
   .label {
     color: $dark;
     font-weight: 500;
@@ -32,6 +32,7 @@ const props = defineProps({
 
   .q-field {
     min-width: 200px;
+
     .q-field__control {
       background-color: $light;
       height: 40px;
