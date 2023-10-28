@@ -35,8 +35,15 @@ li {
 #app:has(.close) {
   .page,
   .top-menu {
-    width: calc(100% - 60px);
     left: 60px;
+  }
+
+  .top-menu{
+    width: calc(100% - 60px);
+  }
+
+  .page{
+    width: calc(100% - 100px);
   }
 }
 

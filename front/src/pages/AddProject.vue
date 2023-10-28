@@ -1,18 +1,103 @@
 <template>
-  <div class="page">
+  <div class="page" style="background-color: transparent !important;">
     <div class="wrap-add-project">
-      <h1>Nowy projekt</h1>
+      <h1 v-if="!editProjectId">Nowy projekt</h1>
+      <h1 v-if="editProjectId">Edytuj projekt</h1>
       <input-component
-        v-model="textareaValue"
+        v-model="newProject.title"
         placeholder="Wpisz tytuł projektu"
-        >Tytuł projektu:</input-component
-      >
+        class="project-title">Tytuł projektu:</input-component>
+      <input-component
+        v-model="newProject.description"
+        placeholder="Wpisz tytuł projektu">Opis projektu:</input-component>
+      <div class="actions-buttons">
+        <button-component flat @click="router.replace('/projects')">Anuluj</button-component>
+        <button-component v-if="!editProjectId" outline @click="saveProject">Zapisz projekt</button-component>
+        <button-component v-if="editProjectId" outline @click="editProject">Edytuj projekt</button-component>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useQuasar } from 'quasar'
+import { ref, onMounted } from 'vue'
 import InputComponent from "../components/InputComponent.vue";
+import ButtonComponent from "../components/ButtonComponent.vue";
+import router from '../router';
+import createInstance from '../services/apiBase';
+
+const $q = useQuasar()
+
+const newProject = ref({
+  title: '',
+  description: ''
+})
+
+const editProjectId = ref(null)
+onMounted(async () => {
+  if (window.location.search.includes('id')) {
+    const searchParams = window.location.search;
+    editProjectId.value = searchParams.split('=')[1];
+  }
+
+  if (editProjectId.value) {
+    try {
+      const instance = createInstance();
+      const result = await instance.get('/project/' + editProjectId.value)
+      newProject.value.title = result.data.project.title
+      newProject.value.description = result.data.project.description
+    } catch (err) {
+      console.log(err)
+    }
+  }
+})
+
+const saveProject = async () => {
+  if (validateForm()) {
+    try {
+      const instance = createInstance();
+      instance.post('project', newProject.value)
+      router.replace('/projects')
+    } catch (err) {
+      console.log(err)
+    }
+  } else {
+    $q.notify({
+      position: "top-right",
+      message: 'Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków',
+      color: 'red'
+    })
+
+  }
+}
+
+const editProject = async () => {
+  if (validateForm()) {
+    try {
+      const instance = createInstance();
+      instance.put(`project/${editProjectId.value}`, newProject.value)
+      router.replace('/projects')
+    } catch (err) {
+      console.log(err)
+    }
+  } else {
+    $q.notify({
+      position: "top-right",
+      message: 'Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków',
+      color: 'red'
+    })
+
+  }
+}
+
+const validateForm = () => {
+  if (newProject.value.title.length <= 5 || newProject.value.description.length < 5) {
+    return false
+  } else {
+    return true
+  }
+}
 </script>
 
 <style lang="scss">
@@ -29,6 +114,21 @@ import InputComponent from "../components/InputComponent.vue";
     line-height: 48px;
     margin-bottom: 20px;
     text-align: center;
+  }
+
+  .project-title {
+    margin-bottom: 20px;
+  }
+
+  .actions-buttons {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .q-btn--flat {
+      padding-left: 0;
+    }
   }
 }
 </style>
