@@ -38,11 +38,11 @@ li {
     left: 60px;
   }
 
-  .top-menu{
+  .top-menu {
     width: calc(100% - 60px);
   }
 
-  .page{
+  .page {
     width: calc(100% - 100px);
   }
 }
@@ -53,4 +53,9 @@ li {
   margin: 20px;
   width: calc(100% - 290px);
   border-radius: 10px;
+
+  h1 {
+    font-size: 36px;
+    line-height: 42px;
+  }
 }

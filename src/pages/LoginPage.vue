@@ -119,7 +119,7 @@ const submitLoginForm = async () => {
   if (validateLoginForm()) {
     try {
       await useUserStore().signIn(loginEmail.value, loginPassword.value);
-      router.replace("/");
+      router.replace("/home");
     } catch (err) {
       console.log("Error during login", err);
     }
