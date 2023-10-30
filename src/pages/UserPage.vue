@@ -14,44 +14,31 @@
         <input-component
           v-model="user.name"
           type="text"
-          placeholder="Wpisz imię"
-          >Imię:</input-component
-        >
+          placeholder="Wpisz imię">Imię:</input-component>
         <input-component
           v-model="user.surname"
           type="text"
-          placeholder="Wpisz nazwisko"
-          >Nazwisko:</input-component
-        >
+          placeholder="Wpisz nazwisko">Nazwisko:</input-component>
         <select-component
           v-model="user.role"
           :options-list="optionsRole"
-          is-filter
-          >Rola:</select-component
-        >
+          is-filter>Rola:</select-component>
         <input-component
           v-model="user.email"
           placeholder="Podaj email"
-          type="email"
-          >Email:</input-component
-        >
+          type="email">Email:</input-component>
         <div class="user-actions-btns">
           <button-component
             outline
             class="delete-user"
-            @click="deleteAccountModal = true"
-            >Usuń konto</button-component
-          >
+            @click="deleteAccountModal = true">Usuń konto</button-component>
           <confirm-modal
             v-model="deleteAccountModal"
             btn-text="Usuń konto"
             modal-text="Czy na pewno chcesz usunąć konto i wszystkie powiązane z nim projekty?"
             @click-cancel="deleteAccountModal = false"
-            @click-confirm="deleteAccount"
-          />
-          <button-component outline @click="editUserData"
-            >Edytuj dane</button-component
-          >
+            @click-confirm="deleteAccount" />
+          <button-component outline @click="editUserData">Edytuj dane</button-component>
         </div>
       </div>
     </div>
@@ -67,6 +54,7 @@ import SelectComponent from "../components/SelectComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import { useUserStore } from "../store/user";
+import router from "../router";
 
 const $q = useQuasar();
 
@@ -133,7 +121,8 @@ const deleteAccount = async () => {
   try {
     const instance = createInstance();
     await instance.delete(`/user/${userStore.user._id}`);
-    //userStore.logout();
+    userStore.logout();
+    router.push("/auth");
   } catch (err) {
     console.log(err);
   }
