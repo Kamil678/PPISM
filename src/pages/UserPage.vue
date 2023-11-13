@@ -141,24 +141,37 @@ const deleteAccountModal = ref(false);
   justify-content: center;
 
   .user-wrap {
-    width: 900px;
-    height: 500px;
+    width: auto;
+    height: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: start;
     background-color: $light;
     border-radius: 10px;
 
-    .welcome-text {
+    @media (min-width: $breakpoint-large) {
+      width: 900px;
       height: 500px;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .welcome-text {
       background-color: $primary;
-      border-radius: 10px 150px 100px 10px;
+      border-radius: 10px 10px 100px 150px;
       display: flex;
       flex-direction: column;
       align-items: left;
       justify-content: start;
       padding: 50px 20px 20px 30px;
       color: $light;
-      max-width: 50%;
+
+
+      @media (min-width: $breakpoint-large) {
+        height: 500px;
+        border-radius: 10px 150px 100px 10px;
+        max-width: 50%;
+      }
 
       h1 {
         font-size: 42px;
@@ -176,20 +189,36 @@ const deleteAccountModal = ref(false);
     }
 
     .user-informations {
-      padding: 50px 30px 20px 0;
+      padding: 50px 30px 20px 30px;
       display: flex;
       flex-direction: column;
       gap: 10px 0;
 
+      @media (min-width: $breakpoint-large) {
+        padding: 50px 30px 20px 0;
+      }
+
       h3 {
         font-size: 26px;
+        text-align: center;
+
+        @media (min-width: $breakpoint-large) {
+          text-align: left;
+        }
       }
 
       .user-actions-btns {
         display: flex;
+        flex-direction: column;
+        gap: 15px 0;
         align-items: center;
         justify-content: space-between;
         margin-top: 20px;
+
+        @media (min-width: $breakpoint-large) {
+          flex-direction: row;
+          gap: 0;
+        }
 
         .delete-user {
           color: $danger;

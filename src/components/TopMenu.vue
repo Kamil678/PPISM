@@ -59,14 +59,14 @@ defineEmits(["clickHideMenu"]);
   justify-content: flex-end;
   background: $light;
 
-  @media (min-width: 768px) {
+  @media (min-width: $breakpoint-large) {
     justify-content: space-between;
   }
 
   .hide-menu {
     display: none;
 
-    @media (min-width: 768px) {
+    @media (min-width: $breakpoint-large) {
       display: block;
     }
   }
