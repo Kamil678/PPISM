@@ -1,103 +1,248 @@
 <template>
-  <div class="page" style="background-color: transparent !important;">
+  <div class="page" style="background-color: transparent !important">
     <div class="wrap-add-project">
       <h1 v-if="!editProjectId">Nowy projekt</h1>
       <h1 v-if="editProjectId">Edytuj projekt</h1>
       <input-component
         v-model="newProject.title"
         placeholder="Wpisz tytuł projektu"
-        class="project-title">Tytuł projektu:</input-component>
+        class="project-title mb-20"
+        >Tytuł projektu:</input-component
+      >
       <input-component
         v-model="newProject.description"
-        placeholder="Wpisz tytuł projektu">Opis projektu:</input-component>
+        placeholder="Wpisz tytuł projektu"
+        class="mb-20"
+        >Opis projektu:</input-component
+      >
+      <input-component
+        v-model="newProject.description"
+        placeholder="Wpisz tytuł projektu"
+        class="mb-20"
+        >Podaj nazwę wyrobu gotowego:</input-component
+      >
+      <div>
+        <p>Części:</p>
+        <p v-if="newProject.allParts.length === 0">Brak</p>
+        <div v-else>
+          <div v-for="part in newProject.allParts">
+            {{ part.name }}
+            <button-with-icon
+              is-tooltip
+              tooltip-text="Usuń część"
+              @click="isDeletePart = true"
+            >
+              <img
+                src="../assets/trash-ico.svg"
+                style="width: 18px; height: 18px"
+                alt="edit"
+              />
+            </button-with-icon>
+            <confirm-modal
+              v-model="isDeletePart"
+              btn-text="Usuń część"
+              modal-text="Czy na pewno chcesz usunąć część?"
+              @click-cancel="isDeletePart = false"
+              @click-confirm="confirmDeletePart(part.id)"
+            />
+          </div>
+        </div>
+      </div>
+      <button-component
+        flat
+        @click="addPartModal = true"
+        style="padding-left: 0"
+        >Dodaj część</button-component
+      >
+      <q-dialog
+        no-esc-dismiss
+        no-backdrop-dismiss
+        :model-value="addPartModal"
+        class="add-part-modal"
+      >
+        <q-card>
+          <q-card-section>
+            <div>
+              <input-component
+                v-model="newPart.name"
+                placeholder="Wpisz nazwę części"
+                class="project-title mb-20"
+                >Nazwa części:</input-component
+              >
+              <input-component
+                v-model="newPart.numberSameParts"
+                type="number"
+                placeholder="Wpisz liczbę takich samych części"
+                class="mb-20"
+                >Liczba takich samych części:</input-component
+              >
+              <input-component
+                v-model="newPart.numberFromAssemblyDrawing"
+                type="number"
+                placeholder="Wpisz numer z rysunku złożeniowego"
+                class="mb-20"
+                >Numer z rysunku złożeniowego:</input-component
+              >
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <button-component flat v-close-popup @click="addPartModal = false"
+              >Anuluj</button-component
+            >
+            <button-component v-close-popup outline @click="addPart"
+              >Dodaj</button-component
+            >
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <div class="actions-buttons">
-        <button-component flat @click="router.replace('/projects')">Anuluj</button-component>
-        <button-component v-if="!editProjectId" outline @click="saveProject">Zapisz projekt</button-component>
-        <button-component v-if="editProjectId" outline @click="editProject">Edytuj projekt</button-component>
+        <button-component flat @click="router.replace('/projects')"
+          >Anuluj</button-component
+        >
+        <button-component v-if="!editProjectId" outline @click="saveProject"
+          >Zapisz projekt</button-component
+        >
+        <button-component v-if="editProjectId" outline @click="editProject"
+          >Edytuj projekt</button-component
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar'
-import { ref, onMounted } from 'vue'
+import { useQuasar } from "quasar";
+import { ref, onMounted } from "vue";
 import InputComponent from "../components/InputComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
-import router from '../router';
-import createInstance from '../services/apiBase';
+import ButtonWithIcon from "../components/ButtonWithIcon.vue";
+import ConfirmModal from "../components/ConfirMmodal.vue";
+import router from "../router";
+import createInstance from "../services/apiBase";
 
-const $q = useQuasar()
+const $q = useQuasar();
 
 const newProject = ref({
-  title: '',
-  description: ''
-})
+  title: "",
+  description: "",
+  productName: "",
+  allParts: [],
+});
 
-const editProjectId = ref(null)
+const addPartModal = ref(false);
+const isDeletePart = ref(false);
+
+const editProjectId = ref(null);
 onMounted(async () => {
-  if (window.location.search.includes('id')) {
+  if (window.location.search.includes("id")) {
     const searchParams = window.location.search;
-    editProjectId.value = searchParams.split('=')[1];
+    editProjectId.value = searchParams.split("=")[1];
   }
 
   if (editProjectId.value) {
     try {
       const instance = createInstance();
-      const result = await instance.get('/project/' + editProjectId.value)
-      newProject.value.title = result.data.project.title
-      newProject.value.description = result.data.project.description
+      const result = await instance.get("/project/" + editProjectId.value);
+      newProject.value.title = result.data.project.title;
+      newProject.value.description = result.data.project.description;
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   }
-})
+});
+
+const newPart = ref({
+  name: "",
+  numberSameParts: 0,
+  numberFromAssemblyDrawing: 0,
+});
+
+const clearFieldAddPart = () => {
+  newPart.value.name = "";
+  newPart.value.numberSameParts = 0;
+  newPart.value.numberFromAssemblyDrawing = 0;
+};
+
+const addPart = () => {
+  newProject.value.allParts.push({
+    id: newProject.value.allParts.length + 1,
+    name: newPart.value.name,
+    numberSameParts: newPart.value.numberSameParts,
+    numberFromAssemblyDrawing: newPart.value.numberFromAssemblyDrawing,
+  });
+  addPartModal.value = false;
+  clearFieldAddPart();
+};
+
+const confirmDeletePart = (id) => {
+  const index = newProject.value.allParts
+    .map((part) => {
+      return part.id;
+    })
+    .indexOf(id);
+
+  newProject.value.allParts.splice(index, 1);
+  isDeletePart.value = false;
+};
 
 const saveProject = async () => {
   if (validateForm()) {
     try {
       const instance = createInstance();
-      instance.post('project', newProject.value)
-      router.replace('/projects')
+      instance.post("project", newProject.value);
+      router.replace("/projects");
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   } else {
     $q.notify({
       position: "top-right",
-      message: 'Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków',
-      color: 'red'
-    })
-
+      message:
+        "Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków",
+      color: "red",
+    });
   }
-}
+};
 
 const editProject = async () => {
   if (validateForm()) {
     try {
       const instance = createInstance();
-      instance.put(`project/${editProjectId.value}`, newProject.value)
-      router.replace('/projects')
+      instance.put(`project/${editProjectId.value}`, newProject.value);
+      router.replace("/projects");
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   } else {
     $q.notify({
       position: "top-right",
-      message: 'Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków',
-      color: 'red'
-    })
-
+      message:
+        "Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków",
+      color: "red",
+    });
   }
-}
+};
 
 const validateForm = () => {
-  if (newProject.value.title.length <= 5 || newProject.value.description.length < 5) {
-    return false
+  if (
+    newProject.value.title.length <= 5 ||
+    newProject.value.description.length < 5
+  ) {
+    return false;
   } else {
-    return true
+    return true;
   }
-}
+};
+const validatePart = () => {
+  if (
+    newProject.value.allParts.length <= 5 ||
+    newProject.value.description.length < 5
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+};
 </script>
 
 <style lang="scss">
@@ -116,9 +261,9 @@ const validateForm = () => {
     text-align: center;
   }
 
-  .project-title {
-    margin-bottom: 20px;
-  }
+  // .project-title {
+  //   margin-bottom: 20px;
+  // }
 
   .actions-buttons {
     margin-top: 30px;
@@ -128,6 +273,19 @@ const validateForm = () => {
 
     .q-btn--flat {
       padding-left: 0;
+    }
+  }
+}
+
+.add-part-modal {
+  .q-card {
+    min-width: 500px;
+    padding: 10px;
+
+    .q-card__actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
   }
 }

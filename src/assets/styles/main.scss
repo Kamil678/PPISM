@@ -16,6 +16,10 @@ a {
   text-decoration: none;
 }
 
+p {
+  margin-bottom: 0 !important;
+}
+
 li {
   list-style: none;
 }
@@ -58,4 +62,8 @@ li {
     font-size: 36px;
     line-height: 42px;
   }
+}
+
+.mb-20 {
+  margin-bottom: 20px;
 }

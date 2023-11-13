@@ -14,7 +14,7 @@
 
 <script setup>
 defineProps({
-  modelValue: String,
+  modelValue: String | Number,
 });
 </script>
 
