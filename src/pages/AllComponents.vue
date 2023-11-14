@@ -55,13 +55,12 @@
         <tooltip-component tooltip-text="Tooltip tekst" />
       </div>
     </div>
-    <div>
-      Here is a mermaid diagram:
-      <pre class="mermaid">
-        flowchart TD 
-        A[{{ inputValue }}] --> B[Load Balancer] 
-
-  </pre>
+    <div class="box">
+      <div class="numbers">
+        <div>1</div>
+        <div>1</div>
+      </div>
+      <div>{{ inputValue }}</div>
     </div>
   </div>
 </template>
@@ -84,4 +83,26 @@ const optionsToSelect = ["Option 1", "Option 2", "Option 3"];
 const multipleSelectValue = ref([]);
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.box {
+  display: flex;
+  width: 100px;
+  height: 50px;
+  border: 1px solid black;
+
+  .numbers {
+    width: 30px;
+    height: 50px;
+
+    div {
+      width: 30px;
+      height: 25px;
+      border-right: 1px solid black;
+    }
+
+    div:nth-child(1) {
+      border-bottom: 1px solid black;
+    }
+  }
+}
+</style>

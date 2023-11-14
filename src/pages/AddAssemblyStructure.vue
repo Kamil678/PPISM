@@ -1,5 +1,16 @@
 <template>
-  Add assembly structure
+  <div class="page">
+    <div style="width: 50%; background-color: aqua;"></div>
+    <div class="graph" style="width: 50%;">
+      <div class="box">
+        <div class="numbers">
+          <div>1</div>
+          <div>1</div>
+        </div>
+        <div>{{ inputValue }}</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -12,82 +23,26 @@ const $q = useQuasar();
 </script>
 
 <style lang="scss">
-.wrap-add-project {
-  margin: 0 auto;
-  height: auto;
-  width: auto;
-  background-color: $light;
-  border-radius: 10px;
-  padding: 30px;
-
-  @media (min-width:$breakpoint-large) {
-    width: 700px;
-  }
-
-  h1 {
-    font-size: 32px;
-    line-height: 36px;
-    margin-bottom: 20px;
-    text-align: center;
-
-    @media (min-width:$breakpoint-small) {
-      font-size: 40px;
-      line-height: 48px;
-    }
-  }
-
-  .project-title {
-    margin-bottom: 20px;
-  }
-
-  .actions-buttons {
-    margin-top: 30px;
+.graph {
+  .box {
     display: flex;
-    flex-direction: column;
-    gap: 15px 0;
-    align-items: center;
-    justify-content: space-between;
+    width: 100px;
+    height: 50px;
+    border: 1px solid black;
 
-    @media (min-width:$breakpoint-small) {
-      flex-direction: row;
-    }
+    .numbers {
+      width: 30px;
+      height: 50px;
 
-    .q-btn--flat {
-      padding-left: 0;
-    }
-  }
-
-  .parts-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    .part-tag {
-      //min-width: 50px;
-      width: auto;
-      background-color: $dark-grey;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 5px;
-
-      .q-btn {
-        padding-left: 5px;
+      div {
+        width: 30px;
+        height: 25px;
+        border-right: 1px solid black;
       }
-    }
-  }
-}
 
-.add-part-modal {
-  .q-card {
-    min-width: 500px;
-    padding: 10px;
-
-    .q-card__actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      div:nth-child(1) {
+        border-bottom: 1px solid black;
+      }
     }
   }
 }
