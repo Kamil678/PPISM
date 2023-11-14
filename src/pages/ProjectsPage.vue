@@ -306,7 +306,7 @@ const confirmDeleteProject = async (id) => {
 };
 
 const addAssemblyStructure = (id) => {
-  router.replace({ name: 'add-assembly-structure', params: { projectId: id } })
+  router.replace('add-assembly-structure?id=' + id)
 }
 </script>
 <style lang="scss">

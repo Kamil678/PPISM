@@ -127,6 +127,7 @@ const isDeletePart = ref(false);
 
 const editProjectId = ref(null);
 onMounted(async () => {
+  console.log(window.location)
   if (window.location.search.includes("id")) {
     const searchParams = window.location.search;
     editProjectId.value = searchParams.split("=")[1];

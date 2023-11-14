@@ -40,7 +40,7 @@ const routes = [
         component: AddProject,
       },
       {
-        path: "/add-assembly-structure/:projectId",
+        path: "/add-assembly-structure",
         name: "add-assembly-structure",
         component: AddAssemblyStructure,
       },
