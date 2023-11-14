@@ -19,9 +19,7 @@
     <div style="margin-top: 20px">
       <h5 style="margin-bottom: 10px">Input:</h5>
       <div style="display: flex; align-items: center; gap: 0 5px">
-        <input-component v-model="inputValue" placeholder="Placeholder"
-          >Label</input-component
-        >
+        <input-component v-model="inputValue" placeholder="Placeholder">Label</input-component>
       </div>
     </div>
     <div style="margin-top: 20px">
@@ -30,9 +28,7 @@
         <input-component
           type="textarea"
           v-model="textareaValue"
-          placeholder="Placeholder"
-          >Label</input-component
-        >
+          placeholder="Placeholder">Label</input-component>
       </div>
     </div>
     <div style="margin-top: 20px">
@@ -41,9 +37,7 @@
         <select-component
           v-model="selectValue"
           :options-list="optionsToSelect"
-          is-filter
-          >Label</select-component
-        >
+          is-filter>Label</select-component>
       </div>
     </div>
     <div style="margin-top: 20px">
@@ -52,9 +46,7 @@
         <multiple-select-component
           v-model="multipleSelectValue"
           :options-list="optionsToSelect"
-          is-filter
-          >Label</multiple-select-component
-        >
+          is-filter>Label</multiple-select-component>
       </div>
     </div>
     <div style="margin-top: 20px">
@@ -63,10 +55,20 @@
         <tooltip-component tooltip-text="Tooltip tekst" />
       </div>
     </div>
+    <div>
+      Here is a mermaid diagram:
+      <pre class="mermaid">
+        flowchart TD 
+        A[{{ inputValue }}] --> B[Load Balancer] 
+
+  </pre>
+    </div>
   </div>
 </template>
 
 <script setup>
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+//mermaid.initialize({ startOnLoad: true });
 import { ref } from "vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
 import InputComponent from "../components/InputComponent.vue";
@@ -75,7 +77,7 @@ import MultipleSelectComponent from "../components/MultipleSelectComponent.vue";
 import TooltipComponent from "../components/TooltipComponent.vue";
 import ButtonWithIcon from "../components/ButtonWithIcon.vue";
 
-const inputValue = ref("");
+const inputValue = ref("f");
 const textareaValue = ref("");
 const selectValue = ref("");
 const optionsToSelect = ["Option 1", "Option 2", "Option 3"];

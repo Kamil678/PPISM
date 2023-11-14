@@ -15,31 +15,39 @@
         v-model="newProject.productName"
         placeholder="Wpisz tytuł projektu"
         class="mb-20">Podaj nazwę wyrobu gotowego:</input-component>
-      <div>
-        <p>Części:</p>
-        <p v-if="newProject.parts.length === 0">Brak</p>
-        <div v-else class="parts-container">
-          <div v-for="part in newProject.parts" class="part-tag">
-            {{ part.name }}
-            <button-with-icon
-              is-tooltip
-              tooltip-text="Usuń część"
-              @click="isDeletePart = true">
-              <p class="fw-500 q-mb-none">&times;</p>
-            </button-with-icon>
-            <confirm-modal
-              v-model="isDeletePart"
-              btn-text="Usuń część"
-              modal-text="Czy na pewno chcesz usunąć część?"
-              @click-cancel="isDeletePart = false"
-              @click-confirm="confirmDeletePart(part.id)" />
+      <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <p>Części:</p>
+          <p v-if="newProject.parts.length === 0">Brak</p>
+          <div v-else class="parts-container">
+            <div v-for="part in newProject.parts" class="part-tag">
+              {{ part.name }}
+              <button-with-icon
+                is-tooltip
+                tooltip-text="Usuń część"
+                @click="isDeletePart = true">
+                <p class="fw-500 q-mb-none">&times;</p>
+              </button-with-icon>
+              <confirm-modal
+                v-model="isDeletePart"
+                btn-text="Usuń część"
+                modal-text="Czy na pewno chcesz usunąć część?"
+                @click-cancel="isDeletePart = false"
+                @click-confirm="confirmDeletePart(part.id)" />
+            </div>
           </div>
         </div>
+        <button-component
+          flat
+          @click="addPartModal = true"
+          style="padding-left: 0">
+          <img
+            src="../assets/plus-ico.svg"
+            style="width: 20px; height: 20px"
+            alt="ad" />
+          Dodaj część
+        </button-component>
       </div>
-      <button-component
-        flat
-        @click="addPartModal = true"
-        style="padding-left: 0">Dodaj część</button-component>
       <q-dialog
         no-esc-dismiss
         no-backdrop-dismiss
@@ -70,6 +78,22 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <!-- <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <p>Struktura montażowa:</p>
+          <p v-if="newProject.parts.length === 0">Brak</p>
+        </div>
+        <button-component
+          flat
+          @click="addAssemblyStructure"
+          style="padding-left: 0">
+          <img
+            src="../assets/plus-ico.svg"
+            style="width: 20px; height: 20px"
+            alt="ad" />
+          Dodaj strukturę montażową
+        </button-component>
+      </div> -->
       <div class="actions-buttons">
         <button-component flat @click="router.replace('/projects')">Anuluj</button-component>
         <button-component v-if="!editProjectId" outline @click="saveProject">Zapisz projekt</button-component>
@@ -153,6 +177,26 @@ const addPart = () => {
     });
   }
 };
+
+// const addAssemblyStructure = () => {
+//   if (validateForm()) {
+//     try {
+//       const instance = createInstance();
+//       const response = instance.post("project", newProject.value);
+//       console.log(response)
+//       //router.replace('/add-assembly-structure',)
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   } else {
+//     $q.notify({
+//       position: "top-right",
+//       message:
+//         "Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków",
+//       color: "red",
+//     });
+//   }
+// }
 
 const confirmDeletePart = (id) => {
   const index = newProject.value.parts

@@ -5,37 +5,52 @@
       <button-component
         outline
         @click="router.replace('/add-project')"
-        class="add-project-btn"
-        >Stwórz projekt</button-component
-      >
+        class="add-project-btn">Stwórz projekt</button-component>
     </div>
     <basic-table
       :hide-bottom="projects.length > 0"
       :rows="projects"
       :columns="columns"
-      class="projects-table"
-    >
+      class="projects-table">
       <template v-slot:no-data="{ icon, message, filter }">
         <div class="full-width row flex-center q-gutter-sm q-py-lg">
           Brak danych
         </div>
       </template>
-      <template v-slot:body-cell-status="props">
-        <q-td>
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th auto-width />
+
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props">
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+      </template>
+      <template v-slot:body="props">
+        <q-td auto-width>
+          <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
+        </q-td>
+        <q-td key="title" :props="props">
+          {{ props.row.title }}
+        </q-td>
+        <q-td key="description" :props="props">
+          {{ props.row.description }}
+        </q-td>
+        <q-td key="status" :props="props">
           <q-btn-dropdown
             unelevated
-            :style="`color:#fff; background:${
-              colorTextStatusMap[props.row.status.name]
-            };`"
-            :label="
-              props.row.status.name === 'NEW'
-                ? 'Nowy'
-                : props.row.status.name === 'INPROGRES'
+            :style="`color:#fff; background:${colorTextStatusMap[props.row.status.name]
+              };`"
+            :label="props.row.status.name === 'NEW'
+              ? 'Nowy'
+              : props.row.status.name === 'INPROGRES'
                 ? 'W trakcie realizacji'
                 : 'Ukończony'
-            "
-            class="status-btn"
-          >
+              "
+            class="status-btn">
             <q-list>
               <q-item
                 dense
@@ -43,8 +58,7 @@
                 :key="`${slug}-${props.row.id}`"
                 clickable
                 v-close-popup
-                @click="(e) => showModal(slug, props.row)"
-              >
+                @click="(e) => showModal(slug, props.row)">
                 <q-item-section>
                   <q-item-label>{{ getNameBySlug(slug) }}</q-item-label>
                 </q-item-section>
@@ -75,46 +89,61 @@
             btn-text="Zmień status"
             modal-text="Czy na pewno chcesz zmienić status?"
             @click-cancel="confirmStatusModal = false"
-            @click-confirm="changeStatus(props.row._id)"
-          />
+            @click-confirm="changeStatus(props.row._id)" />
         </q-td>
-      </template>
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
+        <q-td key="created" :props="props">
+          {{ new Date(props.row.createdAt).toLocaleDateString() ?? "brak" }}
+        </q-td>
+        <q-td key="actions" :props="props">
           <div class="flex justify-end no-wrap" style="grid-gap: 10px">
             <button-with-icon
               is-tooltip
               tooltip-text="Edytuj projekt"
               @click="router.replace('/add-project?id=' + props.row._id)"
-              class="hide-menu"
-            >
+              class="hide-menu">
               <img
                 src="../assets/ic_edit.svg"
                 style="width: 18px; height: 18px"
-                alt="edit"
-              />
+                alt="edit" />
             </button-with-icon>
             <button-with-icon
               is-tooltip
               tooltip-text="Usuń projekt"
               @click="isDelete = true"
-              class="hide-menu"
-            >
+              class="hide-menu">
               <img
                 src="../assets/trash-ico.svg"
                 style="width: 18px; height: 18px"
-                alt="edit"
-              />
+                alt="edit" />
             </button-with-icon>
             <confirm-modal
               v-model="isDelete"
               btn-text="Usuń"
               modal-text="Czy na pewno chcesz usunąć ten projekt?"
               @click-cancel="isDelete = false"
-              @click-confirm="confirmDeleteProject(props.row._id)"
-            />
+              @click-confirm="confirmDeleteProject(props.row._id)" />
           </div>
         </q-td>
+        <q-tr v-show="props.expand" :props="props">
+          <q-td colspan="100%">
+            <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <p>Struktura montażowa:</p>
+                <!-- <p v-if="newProject.parts.length === 0">Brak</p> -->
+              </div>
+              <button-component
+                flat
+                @click="addAssemblyStructure(props.row._id)"
+                style="padding-left: 0">
+                <img
+                  src="../assets/plus-ico.svg"
+                  style="width: 20px; height: 20px"
+                  alt="ad" />
+                Dodaj strukturę montażową
+              </button-component>
+            </div>
+          </q-td>
+        </q-tr>
       </template>
     </basic-table>
   </div>
@@ -275,6 +304,10 @@ const confirmDeleteProject = async (id) => {
     console.log(err);
   }
 };
+
+const addAssemblyStructure = (id) => {
+  router.replace({ name: 'add-assembly-structure', params: { projectId: id } })
+}
 </script>
 <style lang="scss">
 .projects-page {
@@ -292,6 +325,7 @@ const confirmDeleteProject = async (id) => {
 }
 
 .projects-table {
+
   th,
   td {
     border-bottom: none;
