@@ -41,7 +41,7 @@
           is-filter>Wybierz części wchodzące w skład zespołu</multiple-select-component>
       </div>
     </div>
-    <!-- <div class="diagram">
+    <div v-if="JM1.teams.length > 0 || JM1.parts.length > 0" class="diagram">
       <div class="finished-product">
         <div class="box">
           <div class="text">
@@ -50,17 +50,19 @@
         </div>
         <div class="line-vertical"></div>
       </div>
-      <div class="part">
-        <div class="line-horizontal"></div>
-        <div class="box" style="transform: translateX(-50px);">
-          <div class="numbers">
-            <div>1</div>
-            <div>1</div>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 30px;">
+        <div v-for="team in JM1.teams" class="part">
+          <div class="line-horizontal"></div>
+          <div class="box" style="transform: translateX(-50px);">
+            <div class="numbers">
+              <div>Z</div>
+              <div>1</div>
+            </div>
+            <div class="text">{{ team.label }}</div>
           </div>
-          <div class="text">Czesć 1</div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
