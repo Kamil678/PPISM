@@ -84,25 +84,25 @@ const multipleSelectValue = ref([]);
 </script>
 
 <style lang="scss">
-.box {
-  display: flex;
-  width: 100px;
-  height: 50px;
-  border: 1px solid black;
+// .box {
+//   display: flex;
+//   width: 100px;
+//   height: 50px;
+//   border: 1px solid black;
 
-  .numbers {
-    width: 30px;
-    height: 50px;
+//   .numbers {
+//     width: 30px;
+//     height: 50px;
 
-    div {
-      width: 30px;
-      height: 25px;
-      border-right: 1px solid black;
-    }
+//     div {
+//       width: 30px;
+//       height: 25px;
+//       border-right: 1px solid black;
+//     }
 
-    div:nth-child(1) {
-      border-bottom: 1px solid black;
-    }
-  }
-}
+//     div:nth-child(1) {
+//       border-bottom: 1px solid black;
+//     }
+//   }
+// }
 </style>

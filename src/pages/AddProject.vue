@@ -170,6 +170,7 @@ const addPart = () => {
     newProject.value.parts.push({
       id: newProject.value.parts.length + 1,
       name: newPart.value.name,
+      kind: newPart.value.kind,
       numberSameParts: newPart.value.numberSameParts,
       numberFromAssemblyDrawing: newPart.value.numberFromAssemblyDrawing,
     });

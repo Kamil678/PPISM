@@ -43,6 +43,7 @@
     </div>
     <div v-if="JM1.teams.length > 0 || JM1.parts.length > 0" class="diagram">
       <div class="finished-product">
+        <p>JM0</p>
         <div class="box">
           <div class="text">
             <p v-if="project">{{ project.productName }}</p>
@@ -50,15 +51,31 @@
         </div>
         <div class="line-vertical"></div>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 30px;">
-        <div v-for="team in JM1.teams" class="part">
-          <div class="line-horizontal"></div>
-          <div class="box" style="transform: translateX(-50px);">
-            <div class="numbers">
-              <div>Z</div>
-              <div>1</div>
+
+      <div class="container">
+        <p style="margin-bottom: 30px !important; text-align: center;">JM1</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;margin-bottom: 20px;">
+          <div v-for="team in JM1.teams" class="part">
+            <div class="line-horizontal"></div>
+            <div class="box" style="transform: translateX(-50px);">
+              <div class="numbers">
+                <div>Z</div>
+                <div>1</div>
+              </div>
+              <div class="text">{{ team.label }}</div>
             </div>
-            <div class="text">{{ team.label }}</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div v-for="part in JM1.parts" class="part">
+            <div class="line-horizontal"></div>
+            <div :class="part.kind === 'combined' ? 'box green' : 'box blue'" style="transform: translateX(-50px);">
+              <div class="numbers">
+                <div>{{ part.numberSameParts }}</div>
+                <div>{{ part.numberFromAssemblyDrawing }}</div>
+              </div>
+              <div class="text">{{ part.label }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +125,7 @@ onMounted(async () => {
   }
 
   allParts.value = project.value.parts.map(part => {
-    return { label: part.name, value: part.id, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
+    return { label: part.name, value: part.id, kind: part.kind, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
   })
 
   teams.value.push(newTeams.value)
@@ -131,7 +148,9 @@ const clickSelectJM1Temas = () => {
 <style lang="scss">
 .page-add-assembly-structure {
   display: flex;
+  height: 100%;
   gap: 0 50px;
+  overflow: hidden;
 
   .add-teams-wrap,
   .add-JM1 {
@@ -148,15 +167,27 @@ const clickSelectJM1Temas = () => {
   .diagram {
     width: 50%;
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    //height: 100%;
+
+    .container {
+      border-right: 2px dashed purple;
+      height: 100%;
+    }
 
     .finished-product {
+      justify-self: stretch;
       display: flex;
       flex-direction: column;
       align-items: center;
+      //height: 100%;
+      padding: 0 5px;
+      border-left: 2px dashed purple;
+      border-right: 2px dashed purple;
 
       .line-vertical {
-        height: 100px;
+        overflow: hidden;
+        height: 100%;
         width: 1px;
         background-color: #000;
       }
@@ -166,6 +197,8 @@ const clickSelectJM1Temas = () => {
       display: flex;
       flex-direction: row;
       align-items: center;
+      padding: 0 5px;
+      //height: 100%;
 
       .line-horizontal {
         width: 300px;
@@ -177,18 +210,24 @@ const clickSelectJM1Temas = () => {
 
     .box {
       display: flex;
-      width: 100px;
-      height: 50px;
       border: 1px solid black;
+
+      &.green {
+        border-color: $success;
+      }
+
+      &.blue {
+        border-color: $primary;
+      }
 
       .numbers {
         width: 30px;
-        height: 50px;
+        //height: 50px;
         text-align: center;
 
         div {
           width: 30px;
-          height: 25px;
+          //height: 25px;
           border-right: 1px solid black;
         }
 
@@ -198,6 +237,7 @@ const clickSelectJM1Temas = () => {
       }
 
       .text {
+        padding: 10px;
         text-align: center;
       }
     }
