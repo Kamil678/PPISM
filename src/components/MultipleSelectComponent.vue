@@ -10,8 +10,11 @@
       v-bind="$attrs"
       label="Wybierz"
       outlined
-      multiple
-    />
+      multiple>
+      <template v-slot:no-option>
+        {{ noOptionText }}
+      </template>
+    </q-select>
   </div>
 </template>
 
@@ -19,12 +22,14 @@
 const props = defineProps({
   modelValue: Array,
   optionsList: Array,
+  noOptionText: String
 });
 </script>
 
 <style lang="scss">
 .basic-multiple-select {
   width: 100%;
+
   .label {
     color: $dark;
     font-weight: 500;
@@ -32,6 +37,7 @@ const props = defineProps({
 
   .q-field {
     min-width: 200px;
+
     .q-field__control {
       background-color: $light;
       height: 40px;
@@ -54,6 +60,11 @@ const props = defineProps({
       height: 40px;
       min-height: 40px;
     }
+  }
+
+  .no-data {
+    padding: 10px 20px;
+    text-align: center;
   }
 }
 </style>

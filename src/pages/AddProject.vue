@@ -60,6 +60,11 @@
                 v-model="newPart.name"
                 placeholder="Wpisz nazwę części"
                 class="project-title mb-20">Nazwa części:</input-component>
+              <div class="mb-20">
+                <p style="margin-bottom: 5px !important;">Rodzaj części</p>
+                <q-radio dense v-model="newPart.kind" val="combined" label="Część łączona" style="margin-right: 10px;" />
+                <q-radio dense v-model="newPart.kind" val="connecting" label="Część łącząca" />
+              </div>
               <input-component
                 v-model="newPart.numberSameParts"
                 type="number"
@@ -149,6 +154,7 @@ onMounted(async () => {
 
 const newPart = ref({
   name: "",
+  kind: 'combined',
   numberSameParts: 0,
   numberFromAssemblyDrawing: 0,
 });
