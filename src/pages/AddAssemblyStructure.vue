@@ -3,27 +3,63 @@
     <div style="width: 50%;">
       <div class="add-teams-wrap">
         <div style="display: flex; flex-direction: column;">
-          <h3 class="title">Zespoły: <tooltip-component tooltip-text="Podaj wszystkie zespoły, które będą wchodzić w skład struktury montażowej, wraz ze wszystkim częściami należącymi do nich" /></h3>
-          <div v-for="team in teams" :key="team.id" class="mb-20">
-            <input-component
-              v-model="team.name"
-              placeholder="Wpisz tytuł projektu"
-              class="project-title mb-10">Nazwa zespołu:</input-component>
-            <multiple-select-component
-              v-model="team.parts"
-              :options-list="allParts"
-              is-filter>Wybierz części wchodzące w skład zespołu</multiple-select-component>
+          <div style="display: flex; align-items: center; justify-content: space-between;margin-bottom: 10px;">
+            <h3 class="title">Zespoły montażowe: <tooltip-component
+                tooltip-text="Podaj wszystkie zespoły, w odpowiedniej kolejności, które będą wchodzić w skład struktury montażowej, wraz ze wszystkim częściami należącymi do nich" /></h3>
+            <button-component
+              flat
+              @click="clickNewTeam"
+              style="padding-right: 0; align-self: flex-end;">
+              <img
+                src="../assets/flat-plus-ico.svg"
+                style="width: 20px; height: 20px"
+                alt="ad" />
+              Dodaj zespół
+            </button-component>
           </div>
-          <button-component
-            flat
-            @click="addTeams"
-            style="padding-right: 0; align-self: flex-end;">
-            <img
-              src="../assets/flat-plus-ico.svg"
-              style="width: 20px; height: 20px"
-              alt="ad" />
-            Dodaj zespół
-          </button-component>
+          <div v-if="teams.length > 0" v-for="team in teams" :key="team.id" class="mb-20">
+            <div>
+              <p>Nazwa zespołu:</p>
+              <p>{{ team.name }}</p>
+            </div>
+            <div>
+              <p>Części wchodzące w skład zespołu:</p>
+              <p v-for="part in team.parts" :key="part.id">{{ part.name }}</p>
+            </div>
+          </div>
+          <div v-else>
+            Brak zespołów
+          </div>
+          <q-dialog
+            no-esc-dismiss
+            no-backdrop-dismiss
+            :model-value="addTeam"
+            class="add-part-modal">
+            <q-card>
+              <q-card-section>
+                <div>
+                  <input-component
+                    v-model="newTeam.name"
+                    placeholder="Wpisz tytuł projektu"
+                    class="project-title mb-10">Nazwa zespołu:</input-component>
+                  <multiple-select-component
+                    v-model="newTeam.parts"
+                    :options-list="allParts"
+                    is-filter
+                    class="mb-10">Wybierz części wchodzące w skład zespołu</multiple-select-component>
+                  <multiple-select-component
+                    v-model="newTeam.otherTeams"
+                    :options-list="allTeamsOptions"
+                    no-option-text="Brak innych zespołów"
+                    is-filter>Wybierz inne zespoły wchodzące w skład tego zespołu</multiple-select-component>
+                </div>
+              </q-card-section>
+              <q-card-actions align="center">
+                <button-component flat v-close-popup @click="addTeam = false">Anuluj</button-component>
+                <button-component outline @click="confirmAddTeam">Dodaj</button-component>
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
         </div>
       </div>
       <div class="add-JM1">
@@ -38,7 +74,7 @@
         <multiple-select-component
           v-model="JM1.parts"
           :options-list="allParts"
-          is-filter>Wybierz części wchodzące w skład zespołu</multiple-select-component>
+          is-filter>Wybierz części wchodzące w skład JM1</multiple-select-component>
       </div>
     </div>
     <div v-if="JM1.teams.length > 0 || JM1.parts.length > 0" class="diagram">
@@ -80,6 +116,7 @@
         </div>
       </div>
     </div>
+    <button-component outline @click="saveAssemblyStructure">Zapisz strukturę montażową</button-component>
   </div>
 </template>
 
@@ -104,8 +141,10 @@ const JM1 = ref({
   teams: [],
   parts: []
 })
-const newTeams = ref({ id: teams.value.length + 1, name: '', parts: [] })
+
+const newTeam = ref({ id: teams.value.length + 1, name: '', parts: [], otherTeams: [] })
 const allParts = ref([])
+
 
 const projectId = ref(null);
 onMounted(async () => {
@@ -128,20 +167,80 @@ onMounted(async () => {
     return { label: part.name, value: part.id, kind: part.kind, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
   })
 
-  teams.value.push(newTeams.value)
+  $q.notify({
+    position: "top-right",
+    message:
+      "Pamiętaj aby zespoły podawać w odpowiedniej kolejności, ponieważ mogą być one zagnieżdżane!",
+    color: "blue",
+  });
 })
-
-const addTeams = () => {
-  teams.value.push({ id: teams.value.length + 1, name: '', parts: [] })
-}
 
 const allTeamsOptions = ref([])
 const clickSelectJM1Temas = () => {
-  teams.value.forEach(team => {
-    if (team.name !== '') {
-      allTeamsOptions.value.push({ label: team.name, value: team.id })
-    }
+  allTeamsOptions.value = teams.value.map(team => {
+    return { label: team.name, value: team.id, parts: team.parts, otherTeams: team.otherTeams }
   })
+}
+
+const addTeam = ref(false);
+
+const clickNewTeam = () => {
+  allTeamsOptions.value = teams.value.map(team => {
+    return { label: team.name, value: team.id, parts: team.parts, otherTeams: team.otherTeams }
+  })
+  addTeam.value = true
+}
+
+const clearAllFields = () => {
+  newTeam.value.name = '';
+  newTeam.value.parts = [];
+  newTeam.value.otherTeams = [];
+}
+
+const confirmAddTeam = () => {
+  teams.value.push({
+    id: teams.value.length + 1,
+    name: newTeam.value.name,
+    parts: newTeam.value.parts.map(part => {
+      return { id: part.value, name: part.label, kind: part.kind, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
+    }),
+    otherTeams: newTeam.value.otherTeams
+  });
+  clearAllFields()
+  addTeam.value = false
+}
+
+const saveAssemblyStructure = () => {
+  const newAssemblyStructure = {
+    teams: teams.value,
+    JM1: JM1.value,
+    project: projectId.value
+  }
+
+  if (checkData()) {
+    try {
+      const instance = createInstance();
+      instance.post("assembly-structure", newAssemblyStructure);
+      router.replace("/projects");
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    $q.notify({
+      position: "top-right",
+      message:
+        "Nie można stworzyć struktury montażowej bez zespołów montażowych",
+      color: "red",
+    });
+  }
+}
+
+const checkData = () => {
+  if (teams.value.length === 0 || JM1.value.length === 0) {
+    return false
+  } else {
+    return true
+  }
 }
 </script>
 
@@ -156,7 +255,7 @@ const clickSelectJM1Temas = () => {
   .add-JM1 {
     .title {
       font-size: 26px;
-      margin-bottom: 10px;
+      line-height: 30px;
     }
   }
 
