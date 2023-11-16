@@ -147,6 +147,16 @@
               <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
                 <button-with-icon
                   is-tooltip
+                  tooltip-text="Podgląd struktury montażowej"
+                  @click="router.replace(`/preview-assembly-structure?id=` + props.row.assemblyStructure)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/eye-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
                   tooltip-text="Edytuj strukturę montażową"
                   @click="router.replace('/add-project?id=' + props.row._id)"
                   class="hide-menu">
