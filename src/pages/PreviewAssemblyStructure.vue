@@ -15,7 +15,7 @@
         <div style="display: flex; flex-direction: column; gap: 10px;margin-bottom: 20px;">
           <div v-for="team in assemblyStructure.JM1[0].teams" class="part">
             <div class="line-horizontal"></div>
-            <div class="box" style="transform: translateX(-50px);">
+            <div class="box">
               <div class="numbers">
                 <div>Z</div>
                 <div>1</div>
@@ -27,10 +27,10 @@
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <div v-for="part in assemblyStructure.JM1[0].parts" class="part">
             <div class="line-horizontal"></div>
-            <div :class="part.kind === 'combined' ? 'box green' : 'box blue'" style="transform: translateX(-50px);">
+            <div :class="part.kind === 'combined' ? 'box green' : 'box blue'">
               <div class="numbers">
-                <div>{{ part.numberSameParts }}</div>
-                <div>{{ part.numberFromAssemblyDrawing }}</div>
+                <div :style="part.kind === 'combined' ? 'border-color:#388e3c' : 'border-color:#1976d2'">{{ part.numberSameParts }}</div>
+                <div :style="part.kind === 'combined' ? 'border-color:#388e3c' : 'border-color:#1976d2'">{{ part.numberFromAssemblyDrawing }}</div>
               </div>
               <div class="text">{{ part.label }}</div>
             </div>
@@ -42,35 +42,35 @@
   <div v-for="team in assemblyStructure.teams" class="page page-preview-assembly-structure">
     <div class="diagram">
       <div class="finished-product">
-        <p>JM0</p>
+        <p>JM1</p>
         <div class="box">
           <div class="text">
-            <p>Wyrób główny</p>
+            <p>{{ team.name }}</p>
           </div>
         </div>
         <div class="line-vertical"></div>
       </div>
       <div class="container">
-        <p style="margin-bottom: 30px !important; text-align: center;">JM1</p>
+        <p style="margin-bottom: 30px !important; text-align: center;">JM2</p>
         <div style="display: flex; flex-direction: column; gap: 10px;margin-bottom: 20px;">
           <div v-for="otherTeam in team.otherTeams" class="part">
             <div class="line-horizontal"></div>
-            <div class="box" style="transform: translateX(-50px);">
+            <div class="box">
               <div class="numbers">
                 <div>Z</div>
                 <div>1</div>
               </div>
-              <div class="text">{{ otherTeam.name }}</div>
+              <div class="text">{{ otherTeam.label }}</div>
             </div>
           </div>
         </div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <div v-for="part in team.parts" class="part">
             <div class="line-horizontal"></div>
-            <div :class="part.kind === 'combined' ? 'box green' : 'box blue'" style="transform: translateX(-50px);">
-              <div class="numbers">
-                <div>{{ part.numberSameParts }}</div>
-                <div>{{ part.numberFromAssemblyDrawing }}</div>
+            <div :class="part.kind === 'combined' ? 'box green' : 'box blue'">
+              <div class=" numbers">
+                <div :style="part.kind === 'combined' ? 'border-color:#388e3c' : 'border-color:#1976d2'">{{ part.numberSameParts }}</div>
+                <div :style="part.kind === 'combined' ? 'border-color:#388e3c' : 'border-color:#1976d2'">{{ part.numberFromAssemblyDrawing }}</div>
               </div>
               <div class="text">{{ part.name }}</div>
             </div>
@@ -139,11 +139,11 @@ onMounted(async () => {
     }
 
     .finished-product {
+      width: 300px;
       justify-self: stretch;
       display: flex;
       flex-direction: column;
       align-items: center;
-      //height: 100%;
       padding: 0 5px;
       border-left: 2px dashed purple;
       border-right: 2px dashed purple;
@@ -154,6 +154,15 @@ onMounted(async () => {
         width: 1px;
         background-color: #000;
       }
+
+      .box {
+        text-align: center;
+
+        .text {
+          width: 100%;
+          text-align: center;
+        }
+      }
     }
 
     .part {
@@ -161,13 +170,17 @@ onMounted(async () => {
       flex-direction: row;
       align-items: center;
       padding: 0 5px;
-      //height: 100%;
+      transform: translateX(-155px);
 
       .line-horizontal {
-        width: 70%;
+        width: 65%;
         height: 1px;
         background-color: #000;
-        transform: translateX(-50px);
+        overflow: hidden;
+      }
+
+      .box {
+        z-index: 2;
       }
     }
 
@@ -185,12 +198,14 @@ onMounted(async () => {
 
       .numbers {
         width: 30px;
-        //height: 50px;
         text-align: center;
 
         div {
           width: 30px;
-          //height: 25px;
+          height: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           border-right: 1px solid black;
         }
 

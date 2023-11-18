@@ -9,7 +9,21 @@
       @update:modelValue="(value) => $emit('update:modelValue', v)"
       v-bind="$attrs"
       label="Wybierz"
-      outlined />
+      outlined>
+      <template v-if="selectPart" v-slot:option="scope">
+        <q-item v-bind="scope.itemProps">
+          <q-item-section>
+            <q-item-label style="font-weight: 500;">{{ scope.opt.label }}</q-item-label>
+            <div style="display: flex; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 0 5px;">
+                <p>Numer z rysunku złożeniowego: </p>
+                <p>{{ scope.opt.numberFromAssemblyDrawing }}</p>
+              </div>
+            </div>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-select>
   </div>
 </template>
 
@@ -18,6 +32,10 @@ import { ref, onMounted } from "vue";
 const props = defineProps({
   modelValue: String || Object,
   optionsList: Array,
+  selectPart: {
+    type: Boolean,
+    default: false
+  }
 });
 </script>
 

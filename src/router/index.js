@@ -9,6 +9,7 @@ import AddProject from "../pages/AddProject.vue";
 import User from "../pages/UserPage.vue";
 import AddAssemblyStructure from "../pages/AddAssemblyStructure.vue";
 import PriviewAssemblyStructure from "../pages/PreviewAssemblyStructure.vue";
+import AddGraphicAssemblyPlan from "../pages/AddGraphicAssemblyPlan.vue";
 import { useUserStore } from "../store/user";
 
 const routes = [
@@ -41,9 +42,14 @@ const routes = [
         component: AddProject,
       },
       {
-        path: "/add-assembly-structure",
+        path: "/:projectId/add-assembly-structure",
         name: "add-assembly-structure",
         component: AddAssemblyStructure,
+      },
+      {
+        path: "/:projectId/add-graphic-assembly-plan",
+        name: "add-graphic-assembly-plan",
+        component: AddGraphicAssemblyPlan,
       },
       {
         path: "/preview-assembly-structure",

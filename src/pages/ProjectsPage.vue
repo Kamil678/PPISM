@@ -7,20 +7,21 @@
         @click="router.replace('/add-project')"
         class="add-project-btn">Stwórz projekt</button-component>
     </div>
-    <basic-table
+    <q-table
       :hide-bottom="projects.length > 0"
-      :rows="projects"
       :columns="columns"
+      :rows="projects"
+      row-key="title"
+      v-bind="$attrs"
+      ref="table"
+      separator="none"
+      dense
+      binary-state-sort
+      flat
       class="projects-table">
-      <template v-slot:no-data="{ icon, message, filter }">
-        <div class="full-width row flex-center q-gutter-sm q-py-lg">
-          Brak danych
-        </div>
-      </template>
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width />
-
           <q-th
             v-for="col in props.cols"
             :key="col.name"
@@ -30,9 +31,18 @@
         </q-tr>
       </template>
       <template v-slot:body="props">
-        <q-tr>
+        <q-tr :props="props">
           <q-td auto-width>
-            <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
+            <button-with-icon
+              is-tooltip
+              tooltip-text="Pokaż szczegóły projektu"
+              @click="props.expand = !props.expand"
+              style="padding-left: 0">
+              <img
+                src="../assets/plus-ico.svg"
+                style="width: 20px; height: 20px"
+                alt="ad" />
+            </button-with-icon>
           </q-td>
           <q-td key="title" :props="props">
             {{ props.row.title }}
@@ -66,25 +76,6 @@
                 </q-item>
               </q-list>
             </q-btn-dropdown>
-            <!-- <q-dialog
-            :model-value="confirmStatusModal"
-            persistent>
-            <q-card style="padding: 30px;">
-              <q-card-section style="border-bottom: 1px solid #ccc; padding: 0 0 20px 0;">
-                <div class="text-h6 text-center">
-                  Czy na pewno chcesz zmienić status?
-                </div>
-              </q-card-section>
-              <q-card-actions style="padding: 20px 0 0 0 ; display: flex; justify-content: space-between;align-items: center;">
-                <button-component
-                  @click="confirmStatusModal = false"
-                  flat>Anuluj</button-component>
-                <button-component
-                  outline
-                  @click="changeStatus(props.row._id)">Zmień status</button-component>
-              </q-card-actions>
-            </q-card>
-          </q-dialog> -->
             <confirm-modal
               v-model="confirmStatusModal"
               btn-text="Zmień status"
@@ -128,7 +119,7 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%" class="second-row">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
                 <p>Struktura montażowa:</p>
                 <!-- <p v-if="newProject.parts.length === 0">Brak</p> -->
@@ -158,7 +149,7 @@
                 <button-with-icon
                   is-tooltip
                   tooltip-text="Edytuj strukturę montażową"
-                  @click="router.replace('/add-project?id=' + props.row._id)"
+                  @click="onclickEditAssemblyStructure(props.row._id, props.row.assemblyStructure)"
                   class="hide-menu">
                   <img
                     src="../assets/ic_edit.svg"
@@ -184,10 +175,66 @@
                   @click-confirm="confirmDeleteAssemblyStructure(props.row.assemblyStructure)" />
               </div>
             </div>
+            <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <p>Graficzny plan montażu:</p>
+                <!-- <p v-if="newProject.parts.length === 0">Brak</p> -->
+              </div>
+              <button-component
+                v-if="!props.row.graphicAssemblyPlan"
+                flat
+                @click="addGraphicAssemblyPlan(props.row._id)"
+                style="padding-right: 0">
+                <img
+                  src="../assets/plus-ico.svg"
+                  style="width: 20px; height: 20px"
+                  alt="ad" />
+                Dodaj graficzny plan montażu
+              </button-component>
+              <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
+                <!-- <button-with-icon
+                  is-tooltip
+                  tooltip-text="Podgląd struktury montażowej"
+                  @click="router.replace(`/preview-assembly-structure?id=` + props.row.assemblyStructure)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/eye-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon> -->
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Edytuj strukturę montażową"
+                  @click="onclickEditAssemblyStructure(props.row._id, props.row.assemblyStructure)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/ic_edit.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Usuń graficzny plan montażu"
+                  @click="isDeleteAssemblyStructure = true"
+                  class="hide-menu"
+                  style="padding-right: 0;">
+                  <img
+                    src="../assets/trash-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <confirm-modal
+                  v-model="isDeleteGraphicAssemblyPlan"
+                  btn-text="Usuń"
+                  modal-text="Czy na pewno chcesz usunąć graficzny plan montażu?"
+                  @click-cancel="isDeleteGraphicAssemblyPlan = false"
+                  @click-confirm="confirmDeleteGraphicAssemblyPlan(props.row.graphicAssemblyPlan)" />
+              </div>
+            </div>
           </q-td>
         </q-tr>
       </template>
-    </basic-table>
+    </q-table>
   </div>
 </template>
 <script lang="ts" setup>
@@ -203,10 +250,6 @@ import { useQuasar } from "quasar";
 const $q = useQuasar();
 const projects = ref([]);
 
-onMounted(async () => {
-  await getProjects();
-});
-
 const getProjects = async () => {
   try {
     const instance = createInstance();
@@ -216,6 +259,11 @@ const getProjects = async () => {
     console.log(err);
   }
 };
+
+onMounted(async () => {
+  await getProjects();
+});
+
 
 const columns = [
   {
@@ -265,6 +313,7 @@ const columns = [
   },
 ];
 
+//Change status
 const confirmStatusModal = ref(false);
 const userSelectedData = ref({ name: "", id: null });
 
@@ -330,13 +379,8 @@ function getNameBySlug(slug) {
   }
 }
 
-const onclickEditProject = (id) => {
-  console.log("Click edit project", id);
-};
-
+//Delete project
 const isDelete = ref(false);
-const isDeleteAssemblyStructure = ref(false)
-
 const confirmDeleteProject = async (id) => {
   try {
     const instance = createInstance();
@@ -348,16 +392,41 @@ const confirmDeleteProject = async (id) => {
   }
 };
 
+//Interaction with assembly structure
 const addAssemblyStructure = (id) => {
-  router.replace('add-assembly-structure?id=' + id)
+  router.replace(`${id}/add-assembly-structure`)
 }
 
+const onclickEditAssemblyStructure = (projectId, assemblyStructureId) => {
+  router.replace(`${projectId}/add-assembly-structure?id=${assemblyStructureId}`)
+};
+
+const isDeleteAssemblyStructure = ref(false)
 const confirmDeleteAssemblyStructure = async (id) => {
   try {
     const instance = createInstance();
     instance.delete("assembly-structure/" + id);
     isDeleteAssemblyStructure.value = false;
     await getProjects();
+    window.location.reload()
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//Interaction with graphic assembly plan
+const addGraphicAssemblyPlan = (id) => {
+  router.replace(`${id}/add-graphic-assembly-plan`)
+}
+
+const isDeleteGraphicAssemblyPlan = ref(false)
+const confirmDeleteGraphicAssemblyPlan = async (id) => {
+  try {
+    const instance = createInstance();
+    instance.delete("graphic-assembly-plan/" + id);
+    isDeleteGraphicAssemblyPlan.value = false;
+    // await getProjects();
+    // window.location.reload()
   } catch (err) {
     console.log(err);
   }
@@ -423,7 +492,7 @@ const confirmDeleteAssemblyStructure = async (id) => {
 // }
 
 .second-row {
-  div:nth-child(1) {
+  .document-wrap {
     padding: 5px 30px !important;
   }
 }

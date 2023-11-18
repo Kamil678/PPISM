@@ -16,7 +16,7 @@
         placeholder="Wpisz tytuł projektu"
         class="mb-20">Podaj nazwę wyrobu gotowego:</input-component>
       <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
-        <div>
+        <div style=" max-width: 80%;">
           <p>Części:</p>
           <p v-if="newProject.parts.length === 0">Brak</p>
           <div v-else class="parts-container">
@@ -321,6 +321,7 @@ const validatePart = () => {
   }
 
   .parts-container {
+    flex-wrap: wrap;
     display: flex;
     align-items: center;
     gap: 10px;

@@ -14,6 +14,19 @@
       <template v-slot:no-option>
         {{ noOptionText }}
       </template>
+      <template v-if="selectPart" v-slot:option="scope">
+        <q-item v-bind="scope.itemProps">
+          <q-item-section>
+            <q-item-label style="font-weight: 500;">{{ scope.opt.label }}</q-item-label>
+            <div style="display: flex; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 0 5px;">
+                <p>Numer z rysunku złożeniowego: </p>
+                <p>{{ scope.opt.numberFromAssemblyDrawing }}</p>
+              </div>
+            </div>
+          </q-item-section>
+        </q-item>
+      </template>
     </q-select>
   </div>
 </template>
@@ -22,7 +35,11 @@
 const props = defineProps({
   modelValue: Array,
   optionsList: Array,
-  noOptionText: String
+  noOptionText: String,
+  selectPart: {
+    type: Boolean,
+    default: false
+  }
 });
 </script>
 
@@ -49,6 +66,7 @@ const props = defineProps({
 
       .q-field__control-container {
         padding-top: 18px;
+        word-wrap: none;
       }
     }
 
@@ -59,6 +77,11 @@ const props = defineProps({
     .q-field__append {
       height: 40px;
       min-height: 40px;
+    }
+
+    .q-field__native {
+      overflow: hidden;
+      line-height: 21px;
     }
   }
 
