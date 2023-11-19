@@ -47,6 +47,9 @@
                   <q-td key="name" :props="props">
                     {{ props.row.name }}
                   </q-td>
+                  <q-td key="basePart" :props="props">
+                    {{ props.row.basePart.name }}
+                  </q-td>
                   <q-td key="parts" :props="props">
                     <div v-if="props.row.parts.length <= 3">
                       <p v-for="part in props.row.parts" :key="part.id" class="team-part">{{ part.name }}, </p>
@@ -189,7 +192,8 @@
     </div>
     <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 30px;">
       <button-component flat @click="router.replace('/projects')" style="padding-left: 0;">Anuluj</button-component>
-      <button-component outline @click="saveAssemblyStructure">Zapisz strukturę montażową</button-component>
+      <button-component v-if="assemblyStructureId === null" outline @click="saveAssemblyStructure">Zapisz strukturę montażową</button-component>
+      <button-component v-else outline @click="editAssemblyStructure">Edytuj strukturę montażową</button-component>
     </div>
   </div>
 </template>
@@ -276,6 +280,15 @@ const columns = [
     //sortable: true,
   },
   {
+    name: "basePart",
+    label: "Część bazowa",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.name ?? "brak",
+    //sortable: true,
+  },
+  {
     name: "parts",
     label: "Części wchodzące w skład zespołu",
     align: "left",
@@ -335,6 +348,8 @@ const isDeleteTeam = ref(false)
 const confirmDeleteTeam = (id) => {
   const removeIndex = teams.value.map(team => team.id).indexOf(id);
   teams.value.splice(removeIndex, 1)
+  clickSelectJM1Temas();
+  JM1.value[0].teams = [];
 }
 
 const saveAssemblyStructure = () => {
@@ -357,6 +372,31 @@ const saveAssemblyStructure = () => {
       position: "top-right",
       message:
         "Nie można stworzyć struktury montażowej bez zespołów montażowych",
+      color: "red",
+    });
+  }
+}
+
+const editAssemblyStructure = () => {
+  const newAssemblyStructure = {
+    teams: teams.value,
+    JM1: JM1.value,
+    project: projectId.value
+  }
+
+  if (checkData()) {
+    try {
+      const instance = createInstance();
+      instance.put(`assembly-structure/${assemblyStructureId.value}`, newAssemblyStructure);
+      router.replace("/projects");
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    $q.notify({
+      position: "top-right",
+      message:
+        "Błędne dane",
       color: "red",
     });
   }

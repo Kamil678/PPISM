@@ -231,6 +231,45 @@
                   @click-confirm="confirmDeleteGraphicAssemblyPlan(props.row.graphicAssemblyPlan)" />
               </div>
             </div>
+            <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <p>Tabela z zadaniami montażowymi:</p>
+              </div>
+              <div>
+                <q-file
+                  v-model="assemblyTasksTable"
+                  label="Wgraj tabelę z zadaniami montażowymi"
+                  filled
+                  class="file-picker"
+                  style="max-width: 300px" />
+              </div>
+            </div>
+            <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <p>Karta technologiczna:</p>
+              </div>
+              <div>
+                <q-file
+                  v-model="technologicalCard"
+                  label="Wgraj kartę technologiczna"
+                  filled
+                  class="file-picker"
+                  style="max-width: 300px" />
+              </div>
+            </div>
+            <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <p>Karty instrukcyjne:</p>
+              </div>
+              <div>
+                <q-file
+                  v-model="instructionCards"
+                  label="Wgraj karty instrukcyjne"
+                  filled
+                  class="file-picker"
+                  style="max-width: 300px" />
+              </div>
+            </div>
           </q-td>
         </q-tr>
       </template>
@@ -431,6 +470,15 @@ const confirmDeleteGraphicAssemblyPlan = async (id) => {
     console.log(err);
   }
 };
+
+//Interactions with assembly tasks table
+const assemblyTasksTable = ref(null);
+
+//Interactions with assembly tasks table
+const technologicalCard = ref(null);
+
+//Interactions with assembly tasks table
+const instructionCards = ref(null);
 </script>
 <style lang="scss">
 .projects-page {
@@ -494,6 +542,56 @@ const confirmDeleteGraphicAssemblyPlan = async (id) => {
 .second-row {
   .document-wrap {
     padding: 5px 30px !important;
+    min-height: 50px;
+
+    .file-picker {
+      width: 220px;
+      background-color: #fff;
+      border: 2px dashed #D1D1D1;
+
+      .q-field__control {
+        background: transparent;
+        min-height: 35px;
+        height: 35px;
+
+        .q-field__control-container {
+          padding-top: 20px;
+        }
+
+        .q-field__marginal {
+          height: 35px;
+        }
+
+        .q-field__native {
+          min-height: 18px;
+          padding-bottom: 0;
+        }
+
+        .q-field__label {
+          font-size: 12px;
+          color: var(--q-primary);
+          top: 12px;
+        }
+
+        &::before {
+          background: transparent;
+        }
+      }
+
+      &.q-field--float .q-field__label {
+        transform: translateY(-50%) scale(0.75);
+      }
+
+      &.q-field--filled .q-field__control {
+        &::after {
+          height: 0;
+        }
+
+        &::before {
+          border: none;
+        }
+      }
+    }
   }
 }
 </style>
