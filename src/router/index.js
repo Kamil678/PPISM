@@ -6,6 +6,7 @@ import AuthLayout from "../layouts/AuthLayout.vue";
 import MainLayout from "../layouts/MainLayout.vue";
 import ProjectsPage from "../pages/ProjectsPage.vue";
 import AddProject from "../pages/AddProject.vue";
+import AddProduct from "../pages/AddProduct.vue";
 import User from "../pages/UserPage.vue";
 import AddAssemblyStructure from "../pages/AddAssemblyStructure.vue";
 import PriviewAssemblyStructure from "../pages/PreviewAssemblyStructure.vue";
@@ -40,6 +41,11 @@ const routes = [
         path: "/add-project",
         name: "add-project",
         component: AddProject,
+      },
+      {
+        path: "/:projectId/add-product",
+        name: "add-product",
+        component: AddProduct,
       },
       {
         path: "/:projectId/add-assembly-structure",

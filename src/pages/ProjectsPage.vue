@@ -121,6 +121,51 @@
           <q-td colspan="100%" class="second-row">
             <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
+                <p>Wyrób:</p>
+              </div>
+              <button-component
+                v-if="!props.row.product"
+                flat
+                @click="router.replace(`${props.row._id}/add-product`)"
+                style="padding-right: 0">
+                <img
+                  src="../assets/plus-ico.svg"
+                  style="width: 20px; height: 20px"
+                  alt="ad" />
+                Dodaj wyrób
+              </button-component>
+              <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Edytuj wyrób"
+                  @click=""
+                  class="hide-menu">
+                  <img
+                    src="../assets/ic_edit.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Usuń wyrób"
+                  @click="showDeleteProductModal = true"
+                  class="hide-menu"
+                  style="padding-right: 0;">
+                  <img
+                    src="../assets/trash-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <confirm-modal
+                  v-model="showDeleteProductModal"
+                  btn-text="Usuń"
+                  modal-text="Czy na pewno chcesz usunąć wyrób?"
+                  @click-cancel="showDeleteProductModal = false"
+                  @click-confirm="deleteProduct(props.row.product)" />
+              </div>
+            </div>
+            <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
                 <p>Struktura montażowa:</p>
                 <!-- <p v-if="newProject.parts.length === 0">Brak</p> -->
               </div>
@@ -452,6 +497,20 @@ const confirmDeleteAssemblyStructure = async (id) => {
     console.log(err);
   }
 };
+
+//Interaction with product
+const showDeleteProductModal = ref(false);
+const deleteProduct = async (id) => {
+  try {
+    const instance = createInstance();
+    instance.delete("product/" + id);
+    showDeleteProductModal.value = false;
+    await getProjects();
+    window.location.reload()
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 //Interaction with graphic assembly plan
 const addGraphicAssemblyPlan = (id) => {

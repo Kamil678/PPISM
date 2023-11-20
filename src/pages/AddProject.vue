@@ -11,94 +11,6 @@
         v-model="newProject.description"
         placeholder="Wpisz tytuł projektu"
         class="mb-20">Opis projektu:</input-component>
-      <input-component
-        v-model="newProject.productName"
-        placeholder="Wpisz tytuł projektu"
-        class="mb-20">Podaj nazwę wyrobu gotowego:</input-component>
-      <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
-        <div style=" max-width: 80%;">
-          <p>Części:</p>
-          <p v-if="newProject.parts.length === 0">Brak</p>
-          <div v-else class="parts-container">
-            <div v-for="part in newProject.parts" class="part-tag">
-              {{ part.name }}
-              <button-with-icon
-                is-tooltip
-                tooltip-text="Usuń część"
-                @click="isDeletePart = true">
-                <p class="fw-500 q-mb-none">&times;</p>
-              </button-with-icon>
-              <confirm-modal
-                v-model="isDeletePart"
-                btn-text="Usuń część"
-                modal-text="Czy na pewno chcesz usunąć część?"
-                @click-cancel="isDeletePart = false"
-                @click-confirm="confirmDeletePart(part.id)" />
-            </div>
-          </div>
-        </div>
-        <button-component
-          flat
-          @click="addPartModal = true"
-          style="padding-left: 0">
-          <img
-            src="../assets/plus-ico.svg"
-            style="width: 20px; height: 20px"
-            alt="ad" />
-          Dodaj część
-        </button-component>
-      </div>
-      <q-dialog
-        no-esc-dismiss
-        no-backdrop-dismiss
-        :model-value="addPartModal"
-        class="add-part-modal">
-        <q-card>
-          <q-card-section>
-            <div>
-              <input-component
-                v-model="newPart.name"
-                placeholder="Wpisz nazwę części"
-                class="project-title mb-20">Nazwa części:</input-component>
-              <div class="mb-20">
-                <p style="margin-bottom: 5px !important;">Rodzaj części</p>
-                <q-radio dense v-model="newPart.kind" val="combined" label="Część łączona" style="margin-right: 10px;" />
-                <q-radio dense v-model="newPart.kind" val="connecting" label="Część łącząca" />
-              </div>
-              <input-component
-                v-model="newPart.numberSameParts"
-                type="number"
-                placeholder="Wpisz liczbę takich samych części"
-                class="mb-20">Liczba takich samych części:</input-component>
-              <input-component
-                v-model="newPart.numberFromAssemblyDrawing"
-                type="number"
-                placeholder="Wpisz numer z rysunku złożeniowego"
-                class="mb-20">Numer z rysunku złożeniowego:</input-component>
-            </div>
-          </q-card-section>
-          <q-card-actions align="center">
-            <button-component flat v-close-popup @click="addPartModal = false">Anuluj</button-component>
-            <button-component outline @click="addPart">Dodaj</button-component>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <!-- <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
-        <div>
-          <p>Struktura montażowa:</p>
-          <p v-if="newProject.parts.length === 0">Brak</p>
-        </div>
-        <button-component
-          flat
-          @click="addAssemblyStructure"
-          style="padding-left: 0">
-          <img
-            src="../assets/plus-ico.svg"
-            style="width: 20px; height: 20px"
-            alt="ad" />
-          Dodaj strukturę montażową
-        </button-component>
-      </div> -->
       <div class="actions-buttons">
         <button-component flat @click="router.replace('/projects')">Anuluj</button-component>
         <button-component v-if="!editProjectId" outline @click="saveProject">Zapisz projekt</button-component>
@@ -113,8 +25,6 @@ import { useQuasar } from "quasar";
 import { ref, onMounted } from "vue";
 import InputComponent from "../components/InputComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
-import ButtonWithIcon from "../components/ButtonWithIcon.vue";
-import ConfirmModal from "../components/ConfirmModal.vue";
 import router from "../router";
 import createInstance from "../services/apiBase";
 
@@ -123,16 +33,10 @@ const $q = useQuasar();
 const newProject = ref({
   title: "",
   description: "",
-  productName: "",
-  parts: [],
 });
-
-const addPartModal = ref(false);
-const isDeletePart = ref(false);
 
 const editProjectId = ref(null);
 onMounted(async () => {
-  console.log(window.location)
   if (window.location.search.includes("id")) {
     const searchParams = window.location.search;
     editProjectId.value = searchParams.split("=")[1];
@@ -142,80 +46,14 @@ onMounted(async () => {
     try {
       const instance = createInstance();
       const result = await instance.get("/project/" + editProjectId.value);
+
       newProject.value.title = result.data.project.title;
       newProject.value.description = result.data.project.description;
-      newProject.value.productName = result.data.project.productName;
-      newProject.value.parts = result.data.project.parts;
     } catch (err) {
       console.log(err);
     }
   }
 });
-
-const newPart = ref({
-  name: "",
-  kind: 'combined',
-  numberSameParts: 0,
-  numberFromAssemblyDrawing: 0,
-});
-
-const clearFieldAddPart = () => {
-  newPart.value.name = "";
-  newPart.value.numberSameParts = 0;
-  newPart.value.numberFromAssemblyDrawing = 0;
-};
-
-const addPart = () => {
-  if (validatePart()) {
-    newProject.value.parts.push({
-      id: newProject.value.parts.length + 1,
-      name: newPart.value.name,
-      kind: newPart.value.kind,
-      numberSameParts: newPart.value.numberSameParts,
-      numberFromAssemblyDrawing: newPart.value.numberFromAssemblyDrawing,
-    });
-    addPartModal.value = false;
-    clearFieldAddPart();
-  } else {
-    $q.notify({
-      position: "top-right",
-      message:
-        "Nazwa części jest obowiązkowa",
-      color: "red",
-    });
-  }
-};
-
-// const addAssemblyStructure = () => {
-//   if (validateForm()) {
-//     try {
-//       const instance = createInstance();
-//       const response = instance.post("project", newProject.value);
-//       console.log(response)
-//       //router.replace('/add-assembly-structure',)
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   } else {
-//     $q.notify({
-//       position: "top-right",
-//       message:
-//         "Obowiązkowe pola powinny nie być puste i mieć więcej niż 5 znaków",
-//       color: "red",
-//     });
-//   }
-// }
-
-const confirmDeletePart = (id) => {
-  const index = newProject.value.parts
-    .map((part) => {
-      return part.id;
-    })
-    .indexOf(id);
-
-  newProject.value.parts.splice(index, 1);
-  isDeletePart.value = false;
-};
 
 const saveProject = async () => {
   if (validateForm()) {
@@ -263,13 +101,6 @@ const validateForm = () => {
     return false;
   } else {
     return true;
-  }
-};
-const validatePart = () => {
-  if (newPart.name === '') {
-    return false
-  } else {
-    return true
   }
 };
 </script>
