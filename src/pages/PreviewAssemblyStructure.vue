@@ -17,7 +17,7 @@
             <div class="line-horizontal"></div>
             <div class="box">
               <div class="numbers">
-                <div>Z</div>
+                <div style="word-break: break-all;">{{ getFirstLetters(team.label ? team.label : team.name) }}</div>
                 <div>1</div>
               </div>
               <div class="text">{{ team.label }}</div>
@@ -57,10 +57,10 @@
             <div class="line-horizontal"></div>
             <div class="box">
               <div class="numbers">
-                <div>Z</div>
+                <div style="word-break: break-all;">{{ getFirstLetters(otherTeam.label ? otherTeam.label : otherTeam.name) }}</div>
                 <div>1</div>
               </div>
-              <div class="text">{{ otherTeam.label }}</div>
+              <div class="text">{{ otherTeam.label ? otherTeam.label : otherTeam.name }}</div>
             </div>
           </div>
         </div>
@@ -120,6 +120,10 @@ onMounted(async () => {
     }
   }
 });
+
+const getFirstLetters = (string) => {
+  return string.split(' ').map(function (item) { return item[0] }).join('')
+}
 </script>
 
 <style lang="scss">

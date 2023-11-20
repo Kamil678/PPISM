@@ -192,20 +192,20 @@
                 Dodaj graficzny plan montażu
               </button-component>
               <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
-                <!-- <button-with-icon
+                <button-with-icon
                   is-tooltip
-                  tooltip-text="Podgląd struktury montażowej"
+                  tooltip-text="Podgląd graficznego planu montażu"
                   @click="router.replace(`/preview-assembly-structure?id=` + props.row.assemblyStructure)"
                   class="hide-menu">
                   <img
                     src="../assets/eye-ico.svg"
                     style="width: 18px; height: 18px"
                     alt="edit" />
-                </button-with-icon> -->
+                </button-with-icon>
                 <button-with-icon
                   is-tooltip
-                  tooltip-text="Edytuj strukturę montażową"
-                  @click="onclickEditAssemblyStructure(props.row._id, props.row.assemblyStructure)"
+                  tooltip-text="Edytuj graficzny plan montażu"
+                  @click="router.replace(`${props.row._id}/add-graphic-assembly-plan?id=${props.row.graphicAssemblyPlan}`)"
                   class="hide-menu">
                   <img
                     src="../assets/ic_edit.svg"
@@ -215,7 +215,7 @@
                 <button-with-icon
                   is-tooltip
                   tooltip-text="Usuń graficzny plan montażu"
-                  @click="isDeleteAssemblyStructure = true"
+                  @click="isDeleteGraphicAssemblyPlan = true"
                   class="hide-menu"
                   style="padding-right: 0;">
                   <img
@@ -464,8 +464,8 @@ const confirmDeleteGraphicAssemblyPlan = async (id) => {
     const instance = createInstance();
     instance.delete("graphic-assembly-plan/" + id);
     isDeleteGraphicAssemblyPlan.value = false;
-    // await getProjects();
-    // window.location.reload()
+    await getProjects();
+    window.location.reload()
   } catch (err) {
     console.log(err);
   }

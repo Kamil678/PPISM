@@ -3,7 +3,8 @@
     <div class="all-team-wrap">
       <div style="display: flex; align-items: center; justify-content: end;">
         <button-component flat @click=" router.replace('/projects')" style="padding-left: 0; margin-right: 20px;">Anuluj</button-component>
-        <button-component outline @click="saveGraphicAssemblyPlan">Zapisz graficzny plan montażu</button-component>
+        <button-component v-if="graphicAssemblyPlanId === null" outline @click="saveGraphicAssemblyPlan">Zapisz graficzny plan montażu</button-component>
+        <button-component v-else outline @click="editGraphicAssemblyPlan">Edytuj graficzny plan montażu</button-component>
       </div>
       <div v-for="team in graphicAssemblyPlan.teams" class="team">
         <div class="info">
@@ -31,7 +32,7 @@
             </div>
           </div>
           <div class="all-parts-wrap">
-            <div class="parts" style="display: flex; flex-direction: column-reverse; gap: 10px;">
+            <div class="parts" style="display: flex; flex-direction: column-reverse; gap: 10px; margin: 10px 0;">
               <div v-for="part in team.order" class="part">
                 <div v-if="part.kind" style=" display: flex; align-items: center;">
                   <div :class="part.kind === 'combined' ? 'box green' : 'box blue'">
@@ -48,7 +49,7 @@
                   <div class="box">
                     <div class="text">{{ part.label ? part.label : part.name }}</div>
                     <div class="numbers-right">
-                      <div>Z</div>
+                      <div style="word-break: break-all;">{{ getFirstLetters(part.label) }}</div>
                       <div>1</div>
                     </div>
                   </div>
@@ -104,8 +105,14 @@ const graphicAssemblyPlan = ref({
   projectId: route.params.projectId,
   assemblyStructureId: null
 });
+const graphicAssemblyPlanId = ref(null)
 onMounted(async () => {
   const projectId = route.params.projectId
+
+  if (window.location.search.includes("id")) {
+    const searchParams = window.location.search;
+    graphicAssemblyPlanId.value = searchParams.split("=")[1];
+  }
 
   if (projectId) {
     try {
@@ -134,10 +141,22 @@ onMounted(async () => {
           return { label: part.name, value: part.id, kind: part.kind, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
         })
         const optionsOtherTeams = team.otherTeams.map(team => {
-          return { label: team.name, value: team.id, parts: team.parts, otherTeams: team.otherTeams }
+          return { label: team.name, value: team.id + 100, parts: team.parts, otherTeams: team.otherTeams }
         })
         team.allElements = [...optionsParts, ...optionsOtherTeams]
       })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (graphicAssemblyPlanId.value) {
+    try {
+      const instance = createInstance();
+      const result = await instance.get("/graphic-assembly-plan/" + graphicAssemblyPlanId.value);
+      graphicAssemblyPlan.value.teams = result.data.graphicAssemblyPlan.teams;
+      graphicAssemblyPlan.value.projectId = result.data.graphicAssemblyPlan.projectId;
+      graphicAssemblyPlan.value.assemblyStructureId = result.data.graphicAssemblyPlan.assemblyStructureId
     } catch (err) {
       console.log(err);
     }
@@ -149,11 +168,24 @@ const saveGraphicAssemblyPlan = async () => {
   try {
     const instance = createInstance();
     instance.post("graphic-assembly-plan", graphicAssemblyPlan.value);
-    //router.replace("/projects");
+    router.replace("/projects");
   } catch (err) {
     console.log(err);
   }
+}
 
+const getFirstLetters = (string) => {
+  return string.split(' ').map(function (item) { return item[0] }).join('')
+}
+
+const editGraphicAssemblyPlan = async () => {
+  try {
+    const instance = createInstance();
+    instance.put(`graphic-assembly-plan/${graphicAssemblyPlanId.value}`, graphicAssemblyPlan.value);
+    router.replace("/projects");
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 
@@ -252,6 +284,12 @@ const saveGraphicAssemblyPlan = async () => {
 
           &.red {
             border-color: $danger;
+
+            .numbers {
+              div {
+                border-color: $danger !important;
+              }
+            }
           }
 
           .numbers {
