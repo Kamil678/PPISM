@@ -113,18 +113,16 @@ onMounted(async () => {
     editProductId.value = searchParams.split("=")[1];
   }
 
-  // if (editProjectId.value) {
-  //   try {
-  //     const instance = createInstance();
-  //     const result = await instance.get("/project/" + editProjectId.value);
-  //     newProject.value.title = result.data.project.title;
-  //     newProject.value.description = result.data.project.description;
-  //     newProject.value.productName = result.data.project.productName;
-  //     newProject.value.parts = result.data.project.parts;
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }
+  if (editProductId.value) {
+    try {
+      const instance = createInstance();
+      const result = await instance.get("/product/" + editProductId.value);
+      newProduct.value.name = result.data.product.name;
+      newProduct.value.parts = result.data.product.parts;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 });
 
 //Interaction with parts

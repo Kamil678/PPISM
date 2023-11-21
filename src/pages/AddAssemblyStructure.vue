@@ -155,7 +155,7 @@
           <p>JM0</p>
           <div class="box">
             <div class="text">
-              <p v-if="project">{{ project.productName }}</p>
+              <p v-if="project">{{ project.product.name }}</p>
             </div>
           </div>
           <div class="line-vertical"></div>
@@ -255,7 +255,7 @@ onMounted(async () => {
     }
   }
 
-  allParts.value = project.value.parts.map(part => {
+  allParts.value = project.value.product.parts.map(part => {
     return { label: part.name, value: part.id, kind: part.kind, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
   })
 

@@ -138,7 +138,7 @@
                 <button-with-icon
                   is-tooltip
                   tooltip-text="Edytuj wyrób"
-                  @click=""
+                  @click="router.replace(`${props.row._id}/add-product?id=${props.row.product}`)"
                   class="hide-menu">
                   <img
                     src="../assets/ic_edit.svg"

@@ -28,9 +28,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
 const props = defineProps({
-  modelValue: String || Object,
+  modelValue: Object | String,
   optionsList: Array,
   selectPart: {
     type: Boolean,
