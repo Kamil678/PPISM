@@ -11,6 +11,8 @@ import User from "../pages/UserPage.vue";
 import AddAssemblyStructure from "../pages/AddAssemblyStructure.vue";
 import PriviewAssemblyStructure from "../pages/PreviewAssemblyStructure.vue";
 import AddGraphicAssemblyPlan from "../pages/AddGraphicAssemblyPlan.vue";
+import AddTechnologicalCard from "../pages/AddTechnologicalCard.vue";
+import AddInstructionCards from "../pages/AddInstructionCards.vue";
 import { useUserStore } from "../store/user";
 
 const routes = [
@@ -56,6 +58,16 @@ const routes = [
         path: "/:projectId/add-graphic-assembly-plan",
         name: "add-graphic-assembly-plan",
         component: AddGraphicAssemblyPlan,
+      },
+      {
+        path: "/:projectId/add-technological-card",
+        name: "add-technological-card",
+        component: AddTechnologicalCard,
+      },
+      {
+        path: "/:projectId/add-instruction-cards",
+        name: "add-instruction-cards",
+        component: AddInstructionCards,
       },
       {
         path: "/preview-assembly-structure",

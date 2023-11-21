@@ -291,29 +291,113 @@
             </div>
             <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
-                <p>Karta technologiczna:</p>
+                <p>Graficzny kartę technologiczną:</p>
               </div>
-              <div>
-                <q-file
-                  v-model="technologicalCard"
-                  label="Wgraj kartę technologiczna"
-                  filled
-                  class="file-picker"
-                  style="max-width: 300px" />
-              </div>
+              <button-component
+                v-if="!props.row.technologicalCard"
+                flat
+                @click="router.replace(`${props.row._id}/add-technological-card`)"
+                style="padding-right: 0">
+                <img
+                  src="../assets/plus-ico.svg"
+                  style="width: 20px; height: 20px"
+                  alt="ad" />
+                Dodaj kartę technologiczną
+              </button-component>
+              <!-- <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Podgląd graficznego planu montażu"
+                  @click="router.replace(`/preview-assembly-structure?id=` + props.row.assemblyStructure)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/eye-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Edytuj graficzny plan montażu"
+                  @click="router.replace(`${props.row._id}/add-graphic-assembly-plan?id=${props.row.graphicAssemblyPlan}`)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/ic_edit.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Usuń graficzny plan montażu"
+                  @click="isDeleteGraphicAssemblyPlan = true"
+                  class="hide-menu"
+                  style="padding-right: 0;">
+                  <img
+                    src="../assets/trash-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <confirm-modal
+                  v-model="isDeleteGraphicAssemblyPlan"
+                  btn-text="Usuń"
+                  modal-text="Czy na pewno chcesz usunąć graficzny plan montażu?"
+                  @click-cancel="isDeleteGraphicAssemblyPlan = false"
+                  @click-confirm="confirmDeleteGraphicAssemblyPlan(props.row.graphicAssemblyPlan)" />
+              </div> -->
             </div>
             <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
-                <p>Karty instrukcyjne:</p>
+                <p>Graficzny kartę technologiczną:</p>
               </div>
-              <div>
-                <q-file
-                  v-model="instructionCards"
-                  label="Wgraj karty instrukcyjne"
-                  filled
-                  class="file-picker"
-                  style="max-width: 300px" />
-              </div>
+              <button-component
+                v-if="!props.row.instructionCards"
+                flat
+                @click="router.replace(`${props.row._id}/add-instruction-cards`)"
+                style="padding-right: 0">
+                <img
+                  src="../assets/plus-ico.svg"
+                  style="width: 20px; height: 20px"
+                  alt="ad" />
+                Dodaj karty instrukcyjne
+              </button-component>
+              <!-- <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Podgląd graficznego planu montażu"
+                  @click="router.replace(`/preview-assembly-structure?id=` + props.row.assemblyStructure)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/eye-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Edytuj graficzny plan montażu"
+                  @click="router.replace(`${props.row._id}/add-graphic-assembly-plan?id=${props.row.graphicAssemblyPlan}`)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/ic_edit.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Usuń graficzny plan montażu"
+                  @click="isDeleteGraphicAssemblyPlan = true"
+                  class="hide-menu"
+                  style="padding-right: 0;">
+                  <img
+                    src="../assets/trash-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <confirm-modal
+                  v-model="isDeleteGraphicAssemblyPlan"
+                  btn-text="Usuń"
+                  modal-text="Czy na pewno chcesz usunąć graficzny plan montażu?"
+                  @click-cancel="isDeleteGraphicAssemblyPlan = false"
+                  @click-confirm="confirmDeleteGraphicAssemblyPlan(props.row.graphicAssemblyPlan)" />
+              </div> -->
             </div>
           </q-td>
         </q-tr>
@@ -323,7 +407,6 @@
 </template>
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-import BasicTable from "../components/BasicTable.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
 import ButtonWithIcon from "../components/ButtonWithIcon.vue";
 import router from "../router";
