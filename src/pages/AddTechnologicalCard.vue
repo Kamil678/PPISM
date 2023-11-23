@@ -45,6 +45,25 @@
           </div>
         </div>
       </div>
+      <div v-if="exampleRows.length > 0" v-for="row in exampleRows" class="rows-wrap">
+        <div class="operation-number">
+          {{ row.operationNumber }}
+        </div>
+        <div class="operation-content">
+          {{ row.operationContent }}
+        </div>
+        <div class="position">
+          {{ row.position }}
+        </div>
+        <div class="position-symbol">
+          {{ row.positionSymbol }}
+        </div>
+        <div class="time-norms">
+          <div>{{ row.tpz }}</div>
+          <div>{{ row.tj }}</div>
+          <div>{{ row.Nt }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -62,6 +81,28 @@
 // const $q = useQuasar();
 // const route = useRoute();
 
+const exampleRows = [
+  {
+    id: 1,
+    operationNumber: 10,
+    operationContent: 'Montować zespół uszczelnienia zespołu wału wejściowego',
+    position: 'Stanowisko montażu 1',
+    positionSymbol: 'SM1',
+    tpz: 10,
+    tj: 15,
+    Nt: 5
+  },
+  {
+    id: 2,
+    operationNumber: 20,
+    operationContent: 'Montować zespół uszczelnienia zespołu wału wejściowego sFNES FPKSJG SKF SDLKF DSKFJ DS JPK VFSKJV  krj vpfjv fdpjb fkjb fdkjbv',
+    position: 'Stanowisko montażu 1 wdkjv sdov fdkjv afklvj fdlvjk fvjafd vksj vkjfv ksdvj kjhv ojhv kvh sdlvkj dokvh f',
+    positionSymbol: 'SM1',
+    tpz: 10,
+    tj: 15,
+    Nt: 5
+  }
+]
 
 </script>
 
@@ -133,7 +174,8 @@
     }
   }
 
-  .description-rows-wrap {
+  .description-rows-wrap,
+  .rows-wrap {
     min-height: 100px;
     border-bottom: 2px solid #000;
     display: flex;
@@ -192,6 +234,33 @@
 
         div:last-child {
           border-right: none !important;
+        }
+      }
+    }
+  }
+
+  .rows-wrap {
+    background-color: transparent;
+
+    &>div {
+      font-weight: 400;
+    }
+
+    .time-norms {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      &>div {
+        min-height: 100%;
+        width: calc(100% / 3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 2px solid #000;
+
+        &:last-child {
+          border-right: none;
         }
       }
     }
