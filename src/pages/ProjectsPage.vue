@@ -291,7 +291,7 @@
             </div>
             <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
-                <p>Graficzny kartę technologiczną:</p>
+                <p>Karta technologiczna:</p>
               </div>
               <button-component
                 v-if="!props.row.technologicalCard"
@@ -346,7 +346,7 @@
             </div>
             <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
-                <p>Graficzny kartę technologiczną:</p>
+                <p>Karty instrukcyjne:</p>
               </div>
               <button-component
                 v-if="!props.row.instructionCards"
