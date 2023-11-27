@@ -18,6 +18,7 @@
         class="operations-table">
         <template v-slot:header="props">
           <q-tr :props="props">
+            <q-th auto-width />
             <q-th
               v-for="col in props.cols"
               :key="col.name"
@@ -28,6 +29,18 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
+            <q-td auto-width>
+              <button-with-icon
+                is-tooltip
+                tooltip-text="Pokaż szczegóły projektu"
+                @click="props.expand = !props.expand"
+                style="padding-left: 0">
+                <img
+                  src="../assets/plus-ico.svg"
+                  style="width: 20px; height: 20px"
+                  alt="ad" />
+              </button-with-icon>
+            </q-td>
             <q-td key="operationNumber" :props="props">
               {{ props.row.operationNumber }}
             </q-td>
@@ -64,7 +77,7 @@
                 <button-with-icon
                   is-tooltip
                   tooltip-text="Usuń operację montażową"
-                  @click=""
+                  @click="deleteOperation(props.row.id)"
                   class="hide-menu">
                   <img
                     src="../assets/trash-ico.svg"
@@ -72,6 +85,71 @@
                     alt="edit" />
                 </button-with-icon>
               </div>
+            </q-td>
+          </q-tr>
+          <q-tr v-show="props.expand" :props="props">
+            <q-td colspan="100%">
+              <p style="font-size: 18px;">Zabiegi montażowe: </p>
+              <q-table
+                :hide-pagination="true"
+                :rows-per-page-options="[0]"
+                :columns="proceduresColumns"
+                :rows="props.row.procedures"
+                row-key="name"
+                v-bind="$attrs"
+                ref="table"
+                separator="none"
+                dense
+                binary-state-sort
+                flat
+                no-data-label="Brak zabiegów montażowych"
+                style="padding: 10px 75px;"
+                class="operations-table">
+                <template v-slot:header="props">
+                  <q-tr :props="props">
+                    <q-th
+                      v-for="col in props.cols"
+                      :key="col.name"
+                      :props="props">
+                      {{ col.label }}
+                    </q-th>
+                  </q-tr>
+                </template>
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                    <q-td key="setting" :props="props">
+                      {{ props.row.setting }}
+                    </q-td>
+                    <q-td key="position" :props="props">
+                      {{ props.row.position }}
+                    </q-td>
+                    <q-td key="procedure" :props="props">
+                      {{ props.row.procedure }}
+                    </q-td>
+                    <q-td key="action" :props="props">
+                      {{ props.row.action }}
+                    </q-td>
+                    <q-td key="actionType" :props="props">
+                      {{ props.row.actionType }}
+                    </q-td>
+                    <q-td key="actionContent" :props="props">
+                      {{ props.row.actionContent }}
+                    </q-td>
+                    <q-td key="assemblyTool" :props="props">
+                      {{ props.row.assemblyTool }}
+                    </q-td>
+                    <q-td key="parameters" :props="props">
+                      {{ props.row.parameters }}
+                    </q-td>
+                    <q-td key="tg" :props="props">
+                      {{ props.row.tg }}
+                    </q-td>
+                    <q-td key="tp" :props="props">
+                      {{ props.row.tp }}
+                    </q-td>
+                  </q-tr>
+                </template>
+              </q-table>
             </q-td>
           </q-tr>
         </template>
@@ -215,7 +293,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div v-if="operations.length > 0">
       <h3 style="font-size: 24px;line-height: 26px;margin: 30px 0 10px 0;">Podgląd karty technologicznej:</h3>
       <div class="preview-technolgical-card">
         <div class="header">
@@ -260,23 +338,23 @@
             </div>
           </div>
         </div>
-        <div v-if="exampleRows.length > 0" v-for="row in exampleRows" class="rows-wrap">
+        <div v-if="operations.length > 0" v-for="operation in operations" class="rows-wrap">
           <div class="operation-number">
-            {{ row.operationNumber }}
+            {{ operation.operationNumber }}
           </div>
           <div class="operation-content">
-            {{ row.operationContent }}
+            {{ operation.operationContent }}
           </div>
           <div class="position">
-            {{ row.position }}
+            {{ operation.position }}
           </div>
           <div class="position-symbol">
-            {{ row.positionSymbol }}
+            {{ operation.positionSymbol }}
           </div>
           <div class="time-norms">
-            <div>{{ row.tpz }}</div>
-            <div>{{ row.tj }}</div>
-            <div>{{ row.Nt }}</div>
+            <div>{{ operation.tpz }}</div>
+            <div>{{ operation.tj }}</div>
+            <div>{{ operation.Nt }}</div>
           </div>
         </div>
       </div>
@@ -339,6 +417,7 @@ const clearAllFields = () => {
   newOperation.value.tpz = 0
   newOperation.value.tj = 0
   newOperation.value.Nt = 0
+  newOperation.value.procedures = []
 }
 
 const isAddProcedure = ref(false);
@@ -418,7 +497,8 @@ const addNewOperation = () => {
       positionSymbol: newOperation.value.positionSymbol,
       tpz: newOperation.value.tpz,
       tj: newOperation.value.tj,
-      Nt: newOperation.value.Nt
+      Nt: newOperation.value.Nt,
+      procedures: newOperation.value.procedures
     })
     isAddNewOperation.value = false;
     clearAllFields();
@@ -430,6 +510,19 @@ const addNewOperation = () => {
       color: "red",
     });
   }
+}
+
+const deleteOperation = (id) => {
+  console.log(id)
+  const index = operations.value
+    .map((operation) => {
+      return operation.id;
+    })
+    .indexOf(id);
+  console.log(index)
+  operations.value.splice(index, 1);
+  clearAllFields();
+  console.log(newOperation.value)
 }
 
 const operationsColumns = [
@@ -498,29 +591,95 @@ const operationsColumns = [
   },
 ]
 
-const exampleRows = [
+const proceduresColumns = [
   {
-    id: 1,
-    operationNumber: 10,
-    operationContent: 'Montować zespół uszczelnienia zespołu wału wejściowego',
-    position: 'Stanowisko montażu 1',
-    positionSymbol: 'SM1',
-    tpz: 10,
-    tj: 15,
-    Nt: 5
+    name: "setting",
+    label: "Ustawienie",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.setting ?? "brak",
   },
   {
-    id: 2,
-    operationNumber: 20,
-    operationContent: 'Montować zespół uszczelnienia zespołu wału wejściowego sFNES FPKSJG SKF SDLKF DSKFJ DS JPK VFSKJV  krj vpfjv fdpjb fkjb fdkjbv',
-    position: 'Stanowisko montażu 1 wdkjv sdov fdkjv afklvj fdlvjk fvjafd vksj vkjfv ksdvj kjhv ojhv kvh sdlvkj dokvh f',
-    positionSymbol: 'SM1',
-    tpz: 10,
-    tj: 15,
-    Nt: 5
-  }
+    name: "position",
+    label: "Pozycja",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.position ?? "brak",
+  },
+  {
+    name: "procedure",
+    label: "Zabieg",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.procedure ?? "brak",
+  },
+  {
+    name: "action",
+    label: "Czynność",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.action ?? "brak",
+  },
+  {
+    name: "actionType",
+    label: "Typ czynności",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.actionType ?? "brak",
+  },
+  {
+    name: "actionContent",
+    label: "Treść czynności",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.actionContent ?? "brak",
+  },
+  {
+    name: "assemblyTool",
+    label: "Narzędzie montażowe/pomiarowo-kontrolne",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.assemblyTool ?? "brak",
+  },
+  {
+    name: "parameters",
+    label: "Parametry realizacji połączenia montażowego",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.parameters ?? "brak",
+  },
+  {
+    name: "tg [s]",
+    label: "tg",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.tg ?? "brak",
+  },
+  {
+    name: "tp [s]",
+    label: "tp",
+    align: "left",
+    classes: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width",
+    field: (row) => row.tp ?? "brak",
+  },
+  {
+    name: "actions",
+    label: "",
+    align: "right",
+    style: "width: 130px",
+    sortable: false,
+  },
 ]
-
 </script>
 
 <style lang="scss">
@@ -566,7 +725,6 @@ const exampleRows = [
   margin: 0 auto;
   border: 2px solid #000;
   width: 70%;
-  min-height: 85vh;
 
   .header {
     min-height: 100px;
