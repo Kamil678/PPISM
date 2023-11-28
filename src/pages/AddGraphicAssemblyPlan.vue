@@ -1,23 +1,23 @@
 <template>
   <div class="page page-add-graphic-assembly-plan">
-    <div class="all-team-wrap">
+    <div class="all-assembly-units-wrap">
       <div style="display: flex; align-items: center; justify-content: end;">
         <button-component flat @click=" router.replace('/projects')" style="padding-left: 0; margin-right: 20px;">Anuluj</button-component>
         <button-component v-if="graphicAssemblyPlanId === null" outline @click="saveGraphicAssemblyPlan">Zapisz graficzny plan montażu</button-component>
         <button-component v-else outline @click="editGraphicAssemblyPlan">Edytuj graficzny plan montażu</button-component>
       </div>
-      <div v-for="team in graphicAssemblyPlan.teams" class="team">
+      <div v-for="assemblyUnit in graphicAssemblyPlan.assemblyUnits" class="assembly-unit">
         <div class="info">
-          <h3>{{ team.name }}</h3>
+          <h3>{{ assemblyUnit.name }}</h3>
           <p>Ustaw kolejność montowania poszczególnych części i zespołów</p>
           <div style="display: flex; flex-direction: column; gap: 10px 0; margin-top: 10px;">
             <multiple-select-component
-              v-model="team.order"
-              :options-list="team.allElements"
+              v-model="assemblyUnit.order"
+              :options-list="assemblyUnit.allElements"
               is-filter>Ustaw kolejność</multiple-select-component>
           </div>
-          <div v-if="team.order" style="display: flex; flex-direction: column; gap: 5px 0; margin-top: 10px;">
-            <div v-for="(element, index) in team.order" class="order">
+          <div v-if="assemblyUnit.order" style="display: flex; flex-direction: column; gap: 5px 0; margin-top: 10px;">
+            <div v-for="(element, index) in assemblyUnit.order" class="order">
               <p class="order-number">{{ index + 1 }}.</p>
               <p class="selected-element">{{ element.label }}</p>
             </div>
@@ -27,13 +27,13 @@
           <div class="finished-product">
             <div class="box">
               <div class="text">
-                <p>{{ team.name }}</p>
+                <p>{{ assemblyUnit.name }}</p>
               </div>
             </div>
           </div>
           <div class="all-parts-wrap">
             <div class="parts" style="display: flex; flex-direction: column-reverse; gap: 10px; margin: 10px 0;">
-              <div v-for="part in team.order" class="part">
+              <div v-for="part in assemblyUnit.order" class="part">
                 <div v-if="part.kind" style=" display: flex; align-items: center;">
                   <div :class="part.kind === 'combined' ? 'box green' : 'box blue'">
                     <div class=" numbers">
@@ -57,17 +57,17 @@
               </div>
             </div>
             <div class="line-vertical"></div>
-            <div class="other-teams" style="display: flex; flex-direction: column; gap: 10px;margin-bottom: 20px;">
+            <div class="other-assembly-units" style="display: flex; flex-direction: column; gap: 10px;margin-bottom: 20px;">
 
             </div>
           </div>
           <div class="base-part">
             <div class="box red">
               <div class="numbers">
-                <div>{{ team.basePart.numberSameParts }}</div>
-                <div>{{ team.basePart.numberFromAssemblyDrawing }}</div>
+                <div>{{ assemblyUnit.basePart.numberSameParts }}</div>
+                <div>{{ assemblyUnit.basePart.numberFromAssemblyDrawing }}</div>
               </div>
-              <div class="text">{{ team.basePart.name }}</div>
+              <div class="text">{{ assemblyUnit.basePart.name }}</div>
             </div>
           </div>
 
@@ -92,16 +92,16 @@ const project = ref([]);
 const assemblyStructure = ref({
   JM1: [
     {
-      teams: [],
+      assemblyUnits: [],
       parts: []
     }
   ],
-  teams: []
+  assemblyUnits: []
 })
 
 const assemblyStructureId = ref(null);
 const graphicAssemblyPlan = ref({
-  teams: [],
+  assemblyUnits: [],
   projectId: route.params.projectId,
   assemblyStructureId: null
 });
@@ -132,18 +132,18 @@ onMounted(async () => {
       const result = await instance.get("/assembly-structure/" + assemblyStructureId.value);
       assemblyStructure.value = result.data.assemblyStructure
 
-      graphicAssemblyPlan.value.teams = assemblyStructure.value.teams
-      graphicAssemblyPlan.value.teams.forEach(team => {
-        team.order = []
+      graphicAssemblyPlan.value.assemblyUnits = assemblyStructure.value.assemblyUnits
+      graphicAssemblyPlan.value.assemblyUnits.forEach(assemblyUnit => {
+        assemblyUnit.order = []
       })
-      graphicAssemblyPlan.value.teams.forEach(team => {
-        const optionsParts = team.parts.map(part => {
+      graphicAssemblyPlan.value.assemblyUnits.forEach(assemblyUnit => {
+        const optionsParts = assemblyUnit.parts.map(part => {
           return { label: part.name, value: part.id, kind: part.kind, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
         })
-        const optionsOtherTeams = team.otherTeams.map(team => {
-          return { label: team.name, value: team.id + 100, parts: team.parts, otherTeams: team.otherTeams }
+        const optionsOtherAssemblyUnits = assemblyUnit.otherAssemblyUnits.map(assemblyUnit => {
+          return { label: assemblyUnit.name, value: assemblyUnit.id + 100, parts: assemblyUnit.parts, otherAssemblyUnits: assemblyUnit.otherAssemblyUnits }
         })
-        team.allElements = [...optionsParts, ...optionsOtherTeams]
+        assemblyUnit.allElements = [...optionsParts, ...optionsOtherAssemblyUnits]
       })
     } catch (err) {
       console.log(err);
@@ -154,7 +154,7 @@ onMounted(async () => {
     try {
       const instance = createInstance();
       const result = await instance.get("/graphic-assembly-plan/" + graphicAssemblyPlanId.value);
-      graphicAssemblyPlan.value.teams = result.data.graphicAssemblyPlan.teams;
+      graphicAssemblyPlan.value.assemblyUnits = result.data.graphicAssemblyPlan.assemblyUnits;
       graphicAssemblyPlan.value.projectId = result.data.graphicAssemblyPlan.projectId;
       graphicAssemblyPlan.value.assemblyStructureId = result.data.graphicAssemblyPlan.assemblyStructureId
     } catch (err) {
@@ -200,8 +200,8 @@ const editGraphicAssemblyPlan = async () => {
 
 <style lang="scss">
 .page-add-graphic-assembly-plan {
-  .all-team-wrap {
-    .team {
+  .all-assembly-units-wrap {
+    .assembly-unit {
       margin-bottom: 30px;
       display: flex;
       gap: 0 30px;
@@ -261,7 +261,7 @@ const editGraphicAssemblyPlan = async () => {
             background-color: #000;
           }
 
-          .other-teams {
+          .other-assembly-units {
             width: 33.33%;
             display: flex;
             margin-bottom: 50px;

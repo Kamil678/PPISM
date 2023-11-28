@@ -11,7 +11,7 @@ import User from "../pages/UserPage.vue";
 import AddAssemblyStructure from "../pages/AddAssemblyStructure.vue";
 import PriviewAssemblyStructure from "../pages/PreviewAssemblyStructure.vue";
 import AddGraphicAssemblyPlan from "../pages/AddGraphicAssemblyPlan.vue";
-import AddTechnologicalCard from "../pages/AddTechnologicalCard.vue";
+import AddTechnologicalDocumentations from "../pages/AddTechnologicalDocumentations.vue";
 import AddInstructionCards from "../pages/AddInstructionCards.vue";
 import { useUserStore } from "../store/user";
 
@@ -60,9 +60,9 @@ const routes = [
         component: AddGraphicAssemblyPlan,
       },
       {
-        path: "/:projectId/add-technological-card",
-        name: "add-technological-card",
-        component: AddTechnologicalCard,
+        path: "/:projectId/add-technological-documentations",
+        name: "add-technological-documentations",
+        component: AddTechnologicalDocumentations,
       },
       {
         path: "/:projectId/add-instruction-cards",

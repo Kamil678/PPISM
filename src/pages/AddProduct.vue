@@ -3,8 +3,18 @@
     <div class="wrap-add-product">
       <input-component
         v-model="newProduct.name"
-        placeholder="Wpisz nazwę projektu"
+        placeholder="Wpisz nazwę wyrobu gotowego"
         class="mb-20">Podaj nazwę wyrobu gotowego:</input-component>
+      <input-component
+        v-model="newProduct.numberFromAssemblyDraw"
+        type="number"
+        placeholder="Wpisz numer rysunku złożeniowego"
+        class="mb-20">Podaj numer rysunku złożeniowego:</input-component>
+      <input-component
+        v-model="newProduct.seriesSize"
+        type="number"
+        placeholder="Wpisz wielkość serii"
+        class="mb-20">Podaj wielkość serii:</input-component>
       <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
         <div style=" max-width: 80%;">
           <p>Części:</p>
@@ -55,6 +65,26 @@
                 <q-radio dense v-model="newPart.kind" val="combined" label="Część łączona" style="margin-right: 10px;" />
                 <q-radio dense v-model="newPart.kind" val="connecting" label="Część łącząca" />
               </div>
+              <div class="mb-20">
+                <p style="margin-bottom: 5px !important;">Typ części</p>
+                <q-radio dense v-model="newPart.type" val="purchasing" label="Zakupowa" style="margin-right: 10px;" />
+                <q-radio dense v-model="newPart.type" val="ownProduction" label="Własnej produkcji" style="margin-right: 10px;" />
+                <q-radio dense v-model="newPart.type" val="fromCooperation" label="Z kooperacji" />
+              </div>
+              <input-component
+                v-model="newPart.material"
+                placeholder="Wpisz materiał z jakiego zrobiona jest część"
+                class="mb-20">Materiał części:</input-component>
+              <input-component
+                v-model="newPart.mass"
+                type="number"
+                placeholder="Wpisz masę części (w gramach)"
+                class="mb-20">Masa części [g]:</input-component>
+              <input-component
+                v-model="newPart.volume"
+                type="number"
+                placeholder="Wpisz objętość części"
+                class="mb-20">Objętość części:</input-component>
               <input-component
                 v-model="newPart.numberSameParts"
                 type="number"
@@ -75,8 +105,8 @@
       </q-dialog>
       <div class="actions-buttons">
         <button-component flat @click="router.replace('/projects')">Anuluj</button-component>
-        <button-component v-if="!editProductId" outline @click="addProduct">Dodaj produkt</button-component>
-        <button-component v-if="editProductId" outline @click="editProduct">Edytuj ptodukt</button-component>
+        <button-component v-if="!editProductId" outline @click="addProduct">Dodaj wyrób</button-component>
+        <button-component v-if="editProductId" outline @click="editProduct">Edytuj wyrób</button-component>
       </div>
     </div>
   </div>
@@ -98,6 +128,8 @@ const route = useRoute();
 
 const newProduct = ref({
   name: '',
+  numberFromAssemblyDraw: 0,
+  seriesSize: 0,
   parts: [],
   projectId: null
 });
@@ -118,6 +150,8 @@ onMounted(async () => {
       const instance = createInstance();
       const result = await instance.get("/product/" + editProductId.value);
       newProduct.value.name = result.data.product.name;
+      newProduct.value.numberFromAssemblyDraw = result.data.product.numberFromAssemblyDraw
+      newProduct.value.seriesSize = result.data.product.seriesSize
       newProduct.value.parts = result.data.product.parts;
     } catch (err) {
       console.log(err);
@@ -129,6 +163,10 @@ onMounted(async () => {
 const addPartModal = ref(false);
 const newPart = ref({
   name: "",
+  type: 'purchasing',
+  material: '',
+  mass: 0,
+  volume: 0,
   kind: 'combined',
   numberSameParts: 0,
   numberFromAssemblyDrawing: 0,
@@ -136,6 +174,11 @@ const newPart = ref({
 
 const clearFieldAddPart = () => {
   newPart.value.name = "";
+  newPart.value.kind = 'combined';
+  newPart.value.type = "purchasing"
+  newPart.value.material = "";
+  newPart.value.mass = 0;
+  newPart.value.volume = 0;
   newPart.value.numberSameParts = 0;
   newPart.value.numberFromAssemblyDrawing = 0;
 };
@@ -146,6 +189,10 @@ const addPart = () => {
       id: newProduct.value.parts.length + 1,
       name: newPart.value.name,
       kind: newPart.value.kind,
+      type: newPart.value.type,
+      material: newPart.value.material,
+      mass: newPart.value.mass,
+      volume: newPart.value.volume,
       numberSameParts: newPart.value.numberSameParts,
       numberFromAssemblyDrawing: newPart.value.numberFromAssemblyDrawing,
     });
@@ -174,7 +221,7 @@ const confirmDeletePart = (id) => {
 };
 
 const validatePart = () => {
-  if (newPart.name === '') {
+  if (newPart.value.name === '' || newPart.value.material === '' || newPart.value.mass === 0 || newPart.value.volume === 0) {
     return false
   } else {
     return true
@@ -183,7 +230,6 @@ const validatePart = () => {
 
 //Interactions with product
 const addProduct = async () => {
-  console.log(newProduct.value)
   if (validateForm()) {
     try {
       const instance = createInstance();
@@ -224,6 +270,8 @@ const editProduct = async () => {
 const validateForm = () => {
   if (
     newProduct.value.name === '' ||
+    newProduct.value.numberFromAssemblyDraw === 0 ||
+    newProduct.value.seriesSize === 0 ||
     newProduct.value.parts.length === 0
   ) {
     return false;

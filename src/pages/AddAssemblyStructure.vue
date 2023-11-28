@@ -2,14 +2,14 @@
   <div class="page">
     <div class="page-add-assembly-structure">
       <div style="width: 50%;">
-        <div class="add-teams-wrap">
+        <div class="add-assembly-units-wrap">
           <div style="display: flex; flex-direction: column;">
             <div style="display: flex; align-items: center; justify-content: space-between;margin-bottom: 10px;">
               <h3 class="title">Zespoły montażowe: <tooltip-component
                   tooltip-text="Podaj wszystkie zespoły, w odpowiedniej kolejności, które będą wchodzić w skład struktury montażowej, wraz ze wszystkim częściami należącymi do nich" /></h3>
               <button-component
                 flat
-                @click="clickNewTeam"
+                @click="clickNewAssemblyUnit"
                 style="padding-right: 0; align-self: flex-end;">
                 <img
                   src="../assets/flat-plus-ico.svg"
@@ -21,9 +21,9 @@
             <q-table
               :hide-pagination="true"
               :rows-per-page-options="[0]"
-              v-if="teams.length > 0"
+              v-if="assemblyUnits.length > 0"
               :columns="columns"
-              :rows="teams"
+              :rows="assemblyUnits"
               row-key="name"
               v-bind="$attrs"
               ref="table"
@@ -31,7 +31,7 @@
               dense
               binary-state-sort
               flat
-              class="teams-table">
+              class="assembly-units-table">
               <template v-slot:header="props">
                 <q-tr :props="props">
                   <q-th
@@ -52,10 +52,10 @@
                   </q-td>
                   <q-td key="parts" :props="props">
                     <div v-if="props.row.parts.length <= 3">
-                      <p v-for="part in props.row.parts" :key="part.id" class="team-part">{{ part.name }}, </p>
+                      <p v-for="part in props.row.parts" :key="part.id" class="assembly-unit-part">{{ part.name }}, </p>
                     </div>
                     <div v-else>
-                      <p v-for="(part, index) in props.row.parts" :key="part.id" class="team-part">
+                      <p v-for="(part, index) in props.row.parts" :key="part.id" class="assembly-unit-part">
                         <span v-if="index < 4">{{ part.name }}, </span>
                       </p>
                       <button-with-icon
@@ -73,7 +73,7 @@
                       <button-with-icon
                         is-tooltip
                         tooltip-text="Usuń projekt"
-                        @click="confirmDeleteTeam(props.row.id)"
+                        @click="confirmDeleteAssemblyUnit(props.row.id)"
                         class="hide-menu">
                         <img
                           src="../assets/trash-ico.svg"
@@ -85,30 +85,24 @@
                 </q-tr>
               </template>
             </q-table>
-            <!-- <q-table
-              v-if="teams.length > 0"
-              title="Treats"
-              :rows="rows"
-              :columns="columns"
-              row-key="name" /> -->
             <div v-else>
               Brak zespołów
             </div>
             <q-dialog
               no-esc-dismiss
               no-backdrop-dismiss
-              :model-value="addTeam"
+              :model-value="addAssemblyUnit"
               class="add-part-modal">
               <q-card>
                 <q-card-section>
                   <div>
                     <input-component
-                      v-model="newTeam.name"
+                      v-model="newAssemblyUnit.name"
                       placeholder="Wpisz tytuł projektu"
                       class="project-title mb-10">Nazwa zespołu:</input-component>
-                    <select-component select-part v-model="newTeam.basePart" :options-list="allParts" class="mb-10" is-filter>Wybierz część bazową zespołu:</select-component>
+                    <select-component select-part v-model="newAssemblyUnit.basePart" :options-list="allParts" class="mb-10" is-filter>Wybierz część bazową zespołu:</select-component>
                     <multiple-select-component
-                      v-model="newTeam.parts"
+                      v-model="newAssemblyUnit.parts"
                       :options-list="allParts"
                       select-part
                       is-filter
@@ -120,15 +114,15 @@
                       </div>
                     </multiple-select-component>
                     <multiple-select-component
-                      v-model="newTeam.otherTeams"
-                      :options-list="allTeamsOptions"
+                      v-model="newAssemblyUnit.otherAssemblyUnits"
+                      :options-list="allAssemblyUnitsOptions"
                       no-option-text="Brak innych zespołów"
                       is-filter>Wybierz inne zespoły wchodzące w skład tego zespołu</multiple-select-component>
                   </div>
                 </q-card-section>
                 <q-card-actions align="center">
-                  <button-component flat v-close-popup @click="addTeam = false">Anuluj</button-component>
-                  <button-component outline @click="confirmAddTeam">Dodaj</button-component>
+                  <button-component flat v-close-popup @click="addAssemblyUnit = false">Anuluj</button-component>
+                  <button-component outline @click="confirmAddAssemblyUnit">Dodaj</button-component>
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -137,8 +131,8 @@
         <div class="add-JM1">
           <h3 class="title">Jednostaka montażowa 1 rzędu</h3>
           <multiple-select-component
-            v-model="JM1[0].teams"
-            :options-list="allTeamsOptions"
+            v-model="JM1[0].assemblyUnits"
+            :options-list="allAssemblyUnitsOptions"
             is-filter
             no-option-text="Brak zespołów"
             @focus="clickSelectJM1Temas"
@@ -150,7 +144,7 @@
             is-filter>Wybierz części wchodzące w skład JM1</multiple-select-component>
         </div>
       </div>
-      <div v-if="JM1[0].teams.length > 0 || JM1[0].parts.length > 0" class="diagram">
+      <div v-if="JM1[0].assemblyUnits.length > 0 || JM1[0].parts.length > 0" class="diagram">
         <div class="finished-product">
           <p>JM0</p>
           <div class="box">
@@ -164,14 +158,14 @@
         <div class="container">
           <p style="margin-bottom: 50px !important; text-align: center;">JM1</p>
           <div style="display: flex; flex-direction: column; gap: 10px;margin-bottom: 20px;">
-            <div v-for="team in JM1[0].teams" class="part">
+            <div v-for="assemblyUnit in JM1[0].assemblyUnits" class="part">
               <div class="line-horizontal"></div>
               <div class="box" style="transform: translateX(-50px);">
                 <div class="numbers">
                   <div>Z</div>
                   <div>1</div>
                 </div>
-                <div class="text">{{ team.label }}</div>
+                <div class="text">{{ assemblyUnit.label }}</div>
               </div>
             </div>
           </div>
@@ -215,13 +209,13 @@ const $q = useQuasar();
 const route = useRoute();
 
 const project = ref(null)
-const teams = ref([]);
+const assemblyUnits = ref([]);
 const JM1 = ref([{
-  teams: [],
+  assemblyUnits: [],
   parts: []
 }])
 
-const newTeam = ref({ id: teams.value.length + 1, name: '', parts: [], basePart: null, otherTeams: [] })
+const newAssemblyUnit = ref({ id: assemblyUnits.value.length + 1, name: '', parts: [], basePart: null, otherAssemblyUnits: [] })
 const allParts = ref([])
 
 
@@ -248,7 +242,7 @@ onMounted(async () => {
     try {
       const instance = createInstance();
       const result = await instance.get("/assembly-structure/" + assemblyStructureId.value);
-      teams.value = result.data.assemblyStructure.teams;
+      assemblyUnits.value = result.data.assemblyStructure.assemblyUnits;
       JM1.value = result.data.assemblyStructure.JM1;
     } catch (err) {
       console.log(err);
@@ -305,56 +299,55 @@ const columns = [
   },
 ];
 
-const allTeamsOptions = ref([])
+const allAssemblyUnitsOptions = ref([])
 const clickSelectJM1Temas = () => {
-  allTeamsOptions.value = teams.value.map(team => {
-    return { label: team.name, value: team.id, parts: team.parts, otherTeams: team.otherTeams }
+  allAssemblyUnitsOptions.value = assemblyUnits.value.map(assemblyUnit => {
+    return { label: assemblyUnit.name, value: assemblyUnit.id, parts: assemblyUnit.parts, otherAssemblyUnits: assemblyUnit.otherAssemblyUnits }
   })
 }
 
-const addTeam = ref(false);
+const addAssemblyUnit = ref(false);
 
-const clickNewTeam = () => {
-  allTeamsOptions.value = teams.value.map(team => {
-    return { label: team.name, value: team.id, parts: team.parts, otherTeams: team.otherTeams }
+const clickNewAssemblyUnit = () => {
+  allAssemblyUnitsOptions.value = assemblyUnits.value.map(assemblyUnit => {
+    return { label: assemblyUnit.name, value: assemblyUnit.id, parts: assemblyUnit.parts, otherAssemblyUnits: assemblyUnit.otherAssemblyUnits }
   })
-  addTeam.value = true
+  addAssemblyUnit.value = true
 }
 
 const clearAllFields = () => {
-  newTeam.value.name = '';
-  newTeam.value.basePart = null;
-  newTeam.value.parts = [];
-  newTeam.value.otherTeams = [];
+  newAssemblyUnit.value.name = '';
+  newAssemblyUnit.value.basePart = null;
+  newAssemblyUnit.value.parts = [];
+  newAssemblyUnit.value.otherAssemblyUnits = [];
 }
 
-const confirmAddTeam = () => {
-  teams.value.push({
-    id: teams.value.length + 1,
-    name: newTeam.value.name,
-    basePart: { id: newTeam.value.basePart.value, name: newTeam.value.basePart.label, kind: newTeam.value.basePart.kind, numberSameParts: newTeam.value.basePart.numberSameParts, numberFromAssemblyDrawing: newTeam.value.basePart.numberFromAssemblyDrawing },
-    parts: newTeam.value.parts.map(part => {
+const confirmAddAssemblyUnit = () => {
+  assemblyUnits.value.push({
+    id: assemblyUnits.value.length + 1,
+    name: newAssemblyUnit.value.name,
+    basePart: { id: newAssemblyUnit.value.basePart.value, name: newAssemblyUnit.value.basePart.label, kind: newAssemblyUnit.value.basePart.kind, numberSameParts: newAssemblyUnit.value.basePart.numberSameParts, numberFromAssemblyDrawing: newAssemblyUnit.value.basePart.numberFromAssemblyDrawing },
+    parts: newAssemblyUnit.value.parts.map(part => {
       return { id: part.value, name: part.label, kind: part.kind, numberSameParts: part.numberSameParts, numberFromAssemblyDrawing: part.numberFromAssemblyDrawing }
     }),
-    otherTeams: newTeam.value.otherTeams.map(team => {
-      return { id: team.value, name: team.label, parts: team.parts, otherTeams: team.otherTeams }
+    otherAssemblyUnits: newAssemblyUnit.value.otherAssemblyUnits.map(assemblyUnit => {
+      return { id: assemblyUnit.value, name: assemblyUnit.label, parts: assemblyUnit.parts, otherAssemblyUnits: assemblyUnit.otherAssemblyUnits }
     }),
   });
   clearAllFields()
-  addTeam.value = false
+  addAssemblyUnit.value = false
 }
 
-const isDeleteTeam = ref(false)
-const confirmDeleteTeam = (id) => {
-  const removeIndex = teams.value.map(team => team.id).indexOf(id);
-  teams.value.splice(removeIndex, 1)
+const confirmDeleteAssemblyUnit = (id) => {
+  const removeIndex = assemblyUnits.value.map(assemblyUnit => assemblyUnit.id).indexOf(id);
+  assemblyUnits.value.splice(removeIndex, 1)
   clickSelectJM1Temas();
-  JM1.value[0].teams = [];
+  JM1.value[0].assemblyUnits = [];
 }
 
 const saveAssemblyStructure = () => {
   const newAssemblyStructure = {
-    teams: teams.value,
+    assemblyUnits: assemblyUnits.value,
     JM1: JM1.value,
     project: projectId.value
   }
@@ -379,7 +372,7 @@ const saveAssemblyStructure = () => {
 
 const editAssemblyStructure = () => {
   const newAssemblyStructure = {
-    teams: teams.value,
+    assemblyUnits: assemblyUnits.value,
     JM1: JM1.value,
     project: projectId.value
   }
@@ -403,7 +396,7 @@ const editAssemblyStructure = () => {
 }
 
 const checkData = () => {
-  if (teams.value.length === 0 || JM1.value.length === 0) {
+  if (assemblyUnits.value.length === 0 || JM1.value.length === 0) {
     return false
   } else {
     return true
@@ -418,7 +411,7 @@ const checkData = () => {
   gap: 0 50px;
   overflow: hidden;
 
-  .add-teams-wrap,
+  .add-assembly-units-wrap,
   .add-JM1 {
     .title {
       font-size: 26px;
@@ -426,10 +419,10 @@ const checkData = () => {
     }
   }
 
-  .teams-table {
+  .assembly-units-table {
     background-color: transparent;
 
-    .team-part {
+    .assembly-unit-part {
       display: inline;
     }
   }

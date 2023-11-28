@@ -93,8 +93,8 @@
               <q-table
                 :hide-pagination="true"
                 :rows-per-page-options="[0]"
-                :columns="proceduresColumns"
-                :rows="props.row.procedures"
+                :columns="actionsColumns"
+                :rows="props.row.actions"
                 row-key="name"
                 v-bind="$attrs"
                 ref="table"
@@ -193,103 +193,123 @@
           type="number"
           placeholder="Wpisz norme czasu"
           class="project-title mb-10">Norma czasu (Nt):</input-component>
+        <div class="separator"></div>
 
-        <div v-if="newOperation.procedures.length > 0">
-          <p>Czynności montażowe:</p>
-          <div v-for="procedure in newOperation.procedures" style="display: flex; align-items: center;justify-content: space-between;">
-            <p><span>{{ procedure.action }}.</span> {{ procedure.actionContent }}</p>
-            <button-with-icon
-              is-tooltip
-              tooltip-text="Usuń czynność"
-              @click="deleteProcedure(procedure.id)"
-              class="hide-menu"
-              style="padding-right: 0;">
-              <img
-                src="../assets/trash-ico.svg"
-                style="width: 18px; height: 18px"
-                alt="edit" />
-            </button-with-icon>
-          </div>
-        </div>
-        <button-component
-          flat
-          @click="isAddProcedure = true"
-          style="padding-right: 0; align-self: flex-end;">
-          <img
-            src="../assets/flat-plus-ico.svg"
-            style="width: 20px; height: 20px"
-            alt="ad" />
-          Dodaj zabieg (czynność) montażową
-        </button-component>
-        <q-dialog
-          no-esc-dismiss
-          no-backdrop-dismiss
-          :model-value="isAddProcedure"
-          class="add-procedure">
-          <q-card>
-            <q-card-section>
-              <div>
-                <div class="mb-10">
-                  <p style="margin-bottom: 5px !important;">Typ czynności:</p>
-                  <q-radio dense v-model="newProcedure.actionType" val="auxiliary" label="Pomocnicza" style="margin-right: 10px;" />
-                  <q-radio dense v-model="newProcedure.actionType" val="main" label="Główna" style="margin-right: 10px;" />
-                  <q-radio dense v-model="newProcedure.actionType" val="control" label="Kontrolno-pomiarowa" />
-                </div>
-                <input-component
-                  v-model="newProcedure.actionContent"
-                  placeholder="Wpisz treść czynności"
-                  class="project-title mb-10">Nazwa czynności:</input-component>
-                <input-component
-                  v-model="newProcedure.setting"
-                  placeholder="Wpisz ustawinie"
-                  class="project-title mb-10">Ustawienie:</input-component>
-                <input-component
-                  v-model="newProcedure.position"
-                  placeholder="Wpisz pozycję"
-                  class="project-title mb-10">Pozycja:</input-component>
-                <input-component
-                  v-model="newProcedure.procedure"
-                  placeholder="Wpisz zabieg"
-                  class="project-title mb-10">Zabieg:</input-component>
-                <input-component
-                  v-model="newProcedure.assemblyTool"
-                  placeholder="Wpisz narzędzie montażowe/pomiarowo-kontrolne"
-                  class="project-title mb-10">Narzędzie montażowe/pomiarowo-kontrolne:</input-component>
-                <input-component
-                  v-model="newProcedure.parameters"
-                  placeholder="Wpisz parametry realizacji połączenia montażowego"
-                  class="project-title mb-10">Parametry realizacji połączenia montażowego:</input-component>
-                <input-component
-                  v-model="newProcedure.tg"
-                  type="number"
-                  placeholder="Wpisz czas główny"
-                  class="project-title mb-10">Czas główny (tg):</input-component>
-                <input-component
-                  v-model="newProcedure.tp"
-                  type="number"
-                  placeholder="Wpisz czas pomocnicz"
-                  class="project-title mb-10">Czas pomocniczy (tp):</input-component>
+        <!-- Adding procedure -->
+        <div v-if="newOperation.procedures.length > 0" v-for="procedure in newOperation.procedures" :key="procedure.id" style="display: flex;align-items: center;justify-content: space-between;">
+          <div style="display: flex; flex-direction: column;">
+            <p class="procedure-title">Zabieg {{ procedure.number }}</p>
+            <input-component
+              v-model="procedure.name"
+              placeholder="Wpisz treść zabiegu/zadania montażowego"
+              class="project-title">Nazwa zabiegu/zadania:</input-component>
+            <div v-if="procedure.actions.length > 0">
+              <p>Czynności montażowe:</p>
+              <div v-for="action in procedure.actions" :key="action.id" style="display: flex; align-items: center;justify-content: space-between;">
+                <p><span>{{ action.action }}.</span> {{ action.actionContent }}</p>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Usuń czynność"
+                  @click="deleteAction(procedure.id, action.id)"
+                  class="hide-menu"
+                  style="padding-right: 0;">
+                  <img
+                    src="../assets/trash-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
               </div>
-            </q-card-section>
-            <q-card-actions align="center">
-              <button-component flat v-close-popup @click="cancelAddProcedure">Anuluj</button-component>
-              <button-component outline @click="addProcedure">Dodaj</button-component>
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <div style="display: flex; justify-content: space-between;">
+            </div>
+            <button-component
+              flat
+              @click="isAddAction = true"
+              style="padding-right: 0; align-self: flex-end;">
+              <img
+                src="../assets/flat-plus-ico.svg"
+                style="width: 20px; height: 20px"
+                alt="ad" />
+              Dodaj czynność montażową
+            </button-component>
+          </div>
+          <button-with-icon
+            is-tooltip
+            tooltip-text="Usuń zabieg/zadanie montażowe"
+            @click="deleteProcedure(procedure.id)"
+            class="hide-menu"
+            style="padding-right: 0;">
+            <img
+              src="../assets/trash-ico.svg"
+              style="width: 24px; height: 24px"
+              alt="edit" />
+          </button-with-icon>
+          <q-dialog
+            no-esc-dismiss
+            no-backdrop-dismiss
+            :model-value="isAddAction"
+            class="add-procedure">
+            <q-card>
+              <q-card-section>
+                <div>
+                  <div class="mb-10">
+                    <p style="margin-bottom: 5px !important;">Typ czynności:</p>
+                    <q-radio dense v-model="newAction.actionType" val="auxiliary" label="Pomocnicza" style="margin-right: 10px;" />
+                    <q-radio dense v-model="newAction.actionType" val="main" label="Główna" style="margin-right: 10px;" />
+                    <q-radio dense v-model="newAction.actionType" val="control" label="Kontrolno-pomiarowa" />
+                  </div>
+                  <input-component
+                    v-model="newAction.actionContent"
+                    placeholder="Wpisz treść czynności"
+                    class="project-title mb-10">Nazwa czynności:</input-component>
+                  <input-component
+                    v-model="newAction.assemblyTool"
+                    placeholder="Wpisz narzędzie montażowe/pomiarowo-kontrolne"
+                    class="project-title mb-10">Narzędzie montażowe/pomiarowo-kontrolne:</input-component>
+                  <input-component
+                    v-model="newAction.parameters"
+                    placeholder="Wpisz parametry realizacji połączenia montażowego"
+                    class="project-title mb-10">Parametry realizacji połączenia montażowego:</input-component>
+                  <input-component
+                    v-model="newAction.tg"
+                    type="number"
+                    placeholder="Wpisz czas główny"
+                    class="project-title mb-10">Czas główny (tg):</input-component>
+                  <input-component
+                    v-model="newAction.tp"
+                    type="number"
+                    placeholder="Wpisz czas pomocnicz"
+                    class="project-title mb-10">Czas pomocniczy (tp):</input-component>
+                </div>
+              </q-card-section>
+              <q-card-actions align="center">
+                <button-component flat v-close-popup @click="cancelAddAction">Anuluj</button-component>
+                <button-component outline @click="addAction(procedure.id)">Dodaj</button-component>
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </div>
+        <div style="display: flex; justify-content: space-between;margin-top: 30px;">
           <button-component
             flat
             @click="cancelAddNewOperation"
             style="padding-left: 0;">
             Anuluj
           </button-component>
-          <button-component
-            flat
-            @click="addNewOperation"
-            style="padding-right: 0;">
-            Dodaj
-          </button-component>
+          <div>
+            <button-component
+              flat
+              @click="addProcedure"
+              style=" align-self: flex-end;">
+              <img
+                src="../assets/flat-plus-ico.svg"
+                style="width: 20px; height: 20px"
+                alt="ad" />
+              Dodaj zabieg montażowy
+            </button-component>
+            <button-component
+              @click="addNewOperation">
+              Dodaj
+            </button-component>
+          </div>
         </div>
       </div>
     </div>
@@ -369,8 +389,6 @@ import { useRoute } from "vue-router";
 import InputComponent from "../components/InputComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
 import ButtonWithIcon from "../components/ButtonWithIcon.vue";
-// import ConfirmModal from "../components/ConfirmModal.vue";
-// import router from "../router";
 import createInstance from "../services/apiBase";
 
 const $q = useQuasar();
@@ -386,16 +404,17 @@ onMounted(async () => {
       const instance = createInstance();
       const result = await instance.get("/project/" + projectId.value);
       project.value = result.data.project
-      console.log(project.value)
     } catch (err) {
       console.log(err);
     }
   }
 })
 
+//Interactions with operations
 const operations = ref([]);
 
 const isAddNewOperation = ref(false);
+let generalProcedureNumber = 1;
 const newOperation = ref({
   id: operations.value.length + 1,
   operationNumber: operations.value.length > 0 ? operations.value[operations.value.length - 1].operationNumber + 10 : 10,
@@ -405,7 +424,7 @@ const newOperation = ref({
   tpz: 0,
   tj: 0,
   Nt: 0,
-  procedures: [],
+  procedures: [{ id: 1, generalNumber: generalProcedureNumber, number: 1, name: '', actions: [], }],
 })
 
 const clearAllFields = () => {
@@ -417,69 +436,7 @@ const clearAllFields = () => {
   newOperation.value.tpz = 0
   newOperation.value.tj = 0
   newOperation.value.Nt = 0
-  newOperation.value.procedures = []
-}
-
-const isAddProcedure = ref(false);
-const newProcedure = ref({
-  id: newOperation.value.procedures.length + 1,
-  setting: '',
-  position: '',
-  procedure: '',
-  action: newOperation.value.procedures.length + 1,
-  actionType: 'auxiliary',
-  actionContent: '',
-  assemblyTool: '',
-  parameters: '',
-  tg: 0,
-  tp: 0
-})
-
-const clearNewProcedure = () => {
-  newProcedure.value.id = newOperation.value.procedures.length + 1
-  newProcedure.value.setting = ''
-  newProcedure.value.position = ''
-  newProcedure.value.procedure = ''
-  newProcedure.value.action = newOperation.value.procedures.length + 1
-  newProcedure.value.actionType = 'auxiliary'
-  newProcedure.value.actionContent = ''
-  newProcedure.value.assemblyTool = ''
-  newProcedure.value.parameters = ''
-  newProcedure.value.tg = ''
-  newProcedure.value.tp = ''
-}
-
-const cancelAddProcedure = () => {
-  isAddProcedure.value = false
-  clearNewProcedure();
-}
-
-const addProcedure = () => {
-  newOperation.value.procedures.push({
-    id: newProcedure.value.id,
-    setting: newProcedure.value.setting,
-    position: newProcedure.value.position,
-    procedure: newProcedure.value.procedure,
-    action: newProcedure.value.action,
-    actionType: newProcedure.value.actionType,
-    actionContent: newProcedure.value.actionContent,
-    assemblyTool: newProcedure.value.assemblyTool,
-    parameters: newProcedure.value.parameters,
-    tg: newProcedure.value.tg,
-    tp: newProcedure.value.tp,
-  });
-  isAddProcedure.value = false;
-  clearNewProcedure()
-}
-
-const deleteProcedure = (id) => {
-  const index = newOperation.value.procedures
-    .map((procedure) => {
-      return procedure.id;
-    })
-    .indexOf(id);
-
-  newOperation.value.procedures.splice(index, 1);
+  newOperation.value.procedures = [{ id: 1, generalNumber: generalProcedureNumber, number: 1, name: '', actions: [], }]
 }
 
 const cancelAddNewOperation = () => {
@@ -498,7 +455,8 @@ const addNewOperation = () => {
       tpz: newOperation.value.tpz,
       tj: newOperation.value.tj,
       Nt: newOperation.value.Nt,
-      procedures: newOperation.value.procedures
+      procedures: newOperation.value.procedures,
+      actions: newOperation.value.actions
     })
     isAddNewOperation.value = false;
     clearAllFields();
@@ -513,16 +471,73 @@ const addNewOperation = () => {
 }
 
 const deleteOperation = (id) => {
-  console.log(id)
   const index = operations.value
     .map((operation) => {
       return operation.id;
     })
     .indexOf(id);
-  console.log(index)
   operations.value.splice(index, 1);
   clearAllFields();
-  console.log(newOperation.value)
+}
+
+//interactions with procedures
+const addProcedure = () => {
+  ++generalProcedureNumber
+  newOperation.value.procedures.push({ id: newOperation.value.procedures.length + 1, generalProcedureNumber: generalProcedureNumber, number: newOperation.value.procedures.length + 1, name: '', actions: [] })
+}
+
+//Interactions with actions
+const isAddAction = ref(false);
+let generalActionNumber = 1;
+const newAction = ref({
+  generalOperationNumber: generalActionNumber,
+  actionType: 'auxiliary',
+  actionContent: '',
+  assemblyTool: '',
+  parameters: '',
+  tg: 0,
+  tp: 0
+})
+
+const clearNewAction = () => {
+  newAction.value.actionType = 'auxiliary'
+  newAction.value.actionContent = ''
+  newAction.value.assemblyTool = ''
+  newAction.value.parameters = ''
+  newAction.value.tg = ''
+  newAction.value.tp = ''
+}
+
+const cancelAddAction = () => {
+  isAddAction.value = false
+  clearNewAction();
+}
+
+const addAction = (id) => {
+  ++generalActionNumber
+  newOperation.value.procedures[id - 1].actions.push({
+    id: newOperation.value.procedures[id - 1].actions.length + 1,
+    action: newOperation.value.procedures[id - 1].actions.length + 1,
+    actionType: newAction.value.actionType,
+    actionContent: newAction.value.actionContent,
+    assemblyTool: newAction.value.assemblyTool,
+    parameters: newAction.value.parameters,
+    tg: newAction.value.tg,
+    tp: newAction.value.tp,
+  });
+
+  isAddAction.value = false;
+  clearNewAction()
+}
+
+const deleteAction = (procedureId, actionId) => {
+  const index = newOperation.value.procedures[procedureId - 1].actions
+    .map((action) => {
+      return action.id;
+    })
+    .indexOf(actionId);
+
+  newOperation.value.actions.splice(index, 1);
 }
 
 const operationsColumns = [
@@ -591,7 +606,7 @@ const operationsColumns = [
   },
 ]
 
-const proceduresColumns = [
+const actionsColumns = [
   {
     name: "setting",
     label: "Ustawienie",
@@ -706,6 +721,18 @@ const proceduresColumns = [
     width: 50%;
     display: flex;
     flex-direction: column;
+
+    .separator {
+      width: 100%;
+      height: 1px;
+      margin: 10px 0 20px 0;
+      background-color: $dark-grey;
+    }
+
+    .procedure-title {
+      font-size: 18px;
+      margin-bottom: 10px !important;
+    }
   }
 }
 
