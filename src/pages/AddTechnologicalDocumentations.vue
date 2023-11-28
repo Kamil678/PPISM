@@ -15,14 +15,12 @@
         binary-state-sort
         flat
         no-data-label="Brak operacji"
-        class="operations-table">
+        class="operations-table"
+      >
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th auto-width />
-            <q-th
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props">
+            <q-th v-for="col in props.cols" :key="col.name" :props="props">
               {{ col.label }}
             </q-th>
           </q-tr>
@@ -34,11 +32,13 @@
                 is-tooltip
                 tooltip-text="Pokaż szczegóły projektu"
                 @click="props.expand = !props.expand"
-                style="padding-left: 0">
+                style="padding-left: 0"
+              >
                 <img
                   src="../assets/plus-ico.svg"
                   style="width: 20px; height: 20px"
-                  alt="ad" />
+                  alt="ad"
+                />
               </button-with-icon>
             </q-td>
             <q-td key="operationNumber" :props="props">
@@ -68,28 +68,32 @@
                   is-tooltip
                   tooltip-text="Edytuj operację montażową"
                   @click=""
-                  class="hide-menu">
+                  class="hide-menu"
+                >
                   <img
                     src="../assets/ic_edit.svg"
                     style="width: 18px; height: 18px"
-                    alt="edit" />
+                    alt="edit"
+                  />
                 </button-with-icon>
                 <button-with-icon
                   is-tooltip
                   tooltip-text="Usuń operację montażową"
                   @click="deleteOperation(props.row.id)"
-                  class="hide-menu">
+                  class="hide-menu"
+                >
                   <img
                     src="../assets/trash-ico.svg"
                     style="width: 18px; height: 18px"
-                    alt="edit" />
+                    alt="edit"
+                  />
                 </button-with-icon>
               </div>
             </q-td>
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
-              <p style="font-size: 18px;">Zabiegi montażowe: </p>
+              <p style="font-size: 18px">Zabiegi montażowe:</p>
               <q-table
                 :hide-pagination="true"
                 :rows-per-page-options="[0]"
@@ -103,14 +107,16 @@
                 binary-state-sort
                 flat
                 no-data-label="Brak zabiegów montażowych"
-                style="padding: 10px 75px;"
-                class="operations-table">
+                style="padding: 10px 75px"
+                class="operations-table"
+              >
                 <template v-slot:header="props">
                   <q-tr :props="props">
                     <q-th
                       v-for="col in props.cols"
                       :key="col.name"
-                      :props="props">
+                      :props="props"
+                    >
                       {{ col.label }}
                     </q-th>
                   </q-tr>
@@ -157,156 +163,243 @@
       <button-component
         flat
         @click="isAddNewOperation = true"
-        style="padding-right: 0; align-self: flex-end;">
+        style="padding-right: 0; align-self: flex-end"
+      >
         <img
           src="../assets/flat-plus-ico.svg"
           style="width: 20px; height: 20px"
-          alt="ad" />
+          alt="ad"
+        />
         Dodaj nową operację
       </button-component>
       <div v-if="isAddNewOperation" class="add-operation-wrap">
         <input-component
           v-model="newOperation.operationContent"
           placeholder="Wpisz treść operacji"
-          class="project-title mb-10">Treść operacji:</input-component>
+          class="project-title mb-10"
+          >Treść operacji:</input-component
+        >
         <input-component
           v-model="newOperation.position"
           placeholder="Wpisz stanowisko"
-          class="project-title mb-10">Stanowisko:</input-component>
+          class="project-title mb-10"
+          >Stanowisko:</input-component
+        >
         <input-component
           v-model="newOperation.positionSymbol"
           placeholder="Wpisz symbol stanowiska"
-          class="project-title mb-10">Symbol stanowiska:</input-component>
+          class="project-title mb-10"
+          >Symbol stanowiska:</input-component
+        >
         <input-component
           v-model="newOperation.tpz"
           type="number"
           placeholder="Wpisz przgotowawczo-zakończeniowy"
-          class="project-title mb-10">Czas przgotowawczo-zakończeniowy (tpz):</input-component>
+          class="project-title mb-10"
+          >Czas przgotowawczo-zakończeniowy (tpz):</input-component
+        >
         <input-component
           v-model="newOperation.tj"
           type="number"
           placeholder="Wpisz czas jednostkowy"
-          class="project-title mb-10">Czas jednostkowy (tj):</input-component>
+          class="project-title mb-10"
+          >Czas jednostkowy (tj):</input-component
+        >
 
         <input-component
           v-model="newOperation.Nt"
           type="number"
           placeholder="Wpisz norme czasu"
-          class="project-title mb-10">Norma czasu (Nt):</input-component>
+          class="project-title mb-10"
+          >Norma czasu (Nt):</input-component
+        >
         <div class="separator"></div>
 
         <!-- Adding procedure -->
-        <div v-if="newOperation.procedures.length > 0" v-for="procedure in newOperation.procedures" :key="procedure.id" style="display: flex;align-items: center;justify-content: space-between;">
-          <div style="display: flex; flex-direction: column;">
-            <p class="procedure-title">Zabieg {{ procedure.number }}</p>
-            <input-component
-              v-model="procedure.name"
-              placeholder="Wpisz treść zabiegu/zadania montażowego"
-              class="project-title">Nazwa zabiegu/zadania:</input-component>
-            <div v-if="procedure.actions.length > 0">
-              <p>Czynności montażowe:</p>
-              <div v-for="action in procedure.actions" :key="action.id" style="display: flex; align-items: center;justify-content: space-between;">
-                <p><span>{{ action.action }}.</span> {{ action.actionContent }}</p>
-                <button-with-icon
-                  is-tooltip
-                  tooltip-text="Usuń czynność"
-                  @click="deleteAction(procedure.id, action.id)"
-                  class="hide-menu"
-                  style="padding-right: 0;">
-                  <img
-                    src="../assets/trash-ico.svg"
-                    style="width: 18px; height: 18px"
-                    alt="edit" />
-                </button-with-icon>
-              </div>
+        <div
+          v-if="newOperation.procedures.length > 0"
+          v-for="procedure in newOperation.procedures"
+          :key="procedure.id"
+          style="display: flex; flex-direction: column"
+        >
+          <p class="procedure-title">Zabieg {{ procedure.number }}</p>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 0 50px;
+            "
+          >
+            <div style="width: 100%">
+              <input-component
+                v-model="procedure.name"
+                placeholder="Wpisz treść zabiegu/zadania montażowego"
+                class="project-title"
+                >Nazwa zabiegu/zadania:</input-component
+              >
             </div>
-            <button-component
-              flat
-              @click="isAddAction = true"
-              style="padding-right: 0; align-self: flex-end;">
+            <button-with-icon
+              is-tooltip
+              tooltip-text="Usuń zabieg/zadanie montażowe"
+              @click="deleteProcedure(procedure.id)"
+              class="hide-menu"
+              style="padding-right: 0"
+            >
               <img
-                src="../assets/flat-plus-ico.svg"
-                style="width: 20px; height: 20px"
-                alt="ad" />
-              Dodaj czynność montażową
-            </button-component>
+                src="../assets/trash-ico.svg"
+                style="width: 24px; height: 24px"
+                alt="edit"
+              />
+            </button-with-icon>
           </div>
-          <button-with-icon
-            is-tooltip
-            tooltip-text="Usuń zabieg/zadanie montażowe"
-            @click="deleteProcedure(procedure.id)"
-            class="hide-menu"
-            style="padding-right: 0;">
+          <div v-if="procedure.actions.length > 0" style="margin-top: 20px">
+            <p>Czynności montażowe:</p>
+            <div
+              v-for="action in procedure.actions"
+              :key="action.id"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <p>
+                <span>{{ action.action }}.</span> {{ action.actionContent }}
+              </p>
+              <button-with-icon
+                is-tooltip
+                tooltip-text="Usuń czynność"
+                @click="deleteAction(procedure.id, action.id)"
+                class="hide-menu"
+                style="padding-right: 0"
+              >
+                <img
+                  src="../assets/trash-ico.svg"
+                  style="width: 18px; height: 18px"
+                  alt="edit"
+                />
+              </button-with-icon>
+            </div>
+          </div>
+          <button-component
+            flat
+            @click="isAddAction = true"
+            style="padding-right: 0; align-self: flex-end"
+          >
             <img
-              src="../assets/trash-ico.svg"
-              style="width: 24px; height: 24px"
-              alt="edit" />
-          </button-with-icon>
+              src="../assets/flat-plus-ico.svg"
+              style="width: 20px; height: 20px"
+              alt="ad"
+            />
+            Dodaj czynność montażową
+          </button-component>
           <q-dialog
             no-esc-dismiss
             no-backdrop-dismiss
             :model-value="isAddAction"
-            class="add-procedure">
+            class="add-procedure"
+          >
             <q-card>
               <q-card-section>
                 <div>
                   <div class="mb-10">
-                    <p style="margin-bottom: 5px !important;">Typ czynności:</p>
-                    <q-radio dense v-model="newAction.actionType" val="auxiliary" label="Pomocnicza" style="margin-right: 10px;" />
-                    <q-radio dense v-model="newAction.actionType" val="main" label="Główna" style="margin-right: 10px;" />
-                    <q-radio dense v-model="newAction.actionType" val="control" label="Kontrolno-pomiarowa" />
+                    <p style="margin-bottom: 5px !important">Typ czynności:</p>
+                    <q-radio
+                      dense
+                      v-model="newAction.actionType"
+                      val="auxiliary"
+                      label="Pomocnicza"
+                      style="margin-right: 10px"
+                    />
+                    <q-radio
+                      dense
+                      v-model="newAction.actionType"
+                      val="main"
+                      label="Główna"
+                      style="margin-right: 10px"
+                    />
+                    <q-radio
+                      dense
+                      v-model="newAction.actionType"
+                      val="control"
+                      label="Kontrolno-pomiarowa"
+                    />
                   </div>
                   <input-component
                     v-model="newAction.actionContent"
                     placeholder="Wpisz treść czynności"
-                    class="project-title mb-10">Nazwa czynności:</input-component>
+                    class="project-title mb-10"
+                    >Nazwa czynności:</input-component
+                  >
                   <input-component
                     v-model="newAction.assemblyTool"
                     placeholder="Wpisz narzędzie montażowe/pomiarowo-kontrolne"
-                    class="project-title mb-10">Narzędzie montażowe/pomiarowo-kontrolne:</input-component>
+                    class="project-title mb-10"
+                    >Narzędzie montażowe/pomiarowo-kontrolne:</input-component
+                  >
                   <input-component
                     v-model="newAction.parameters"
                     placeholder="Wpisz parametry realizacji połączenia montażowego"
-                    class="project-title mb-10">Parametry realizacji połączenia montażowego:</input-component>
+                    class="project-title mb-10"
+                    >Parametry realizacji połączenia
+                    montażowego:</input-component
+                  >
                   <input-component
                     v-model="newAction.tg"
                     type="number"
                     placeholder="Wpisz czas główny"
-                    class="project-title mb-10">Czas główny (tg):</input-component>
+                    class="project-title mb-10"
+                    >Czas główny (tg):</input-component
+                  >
                   <input-component
                     v-model="newAction.tp"
                     type="number"
                     placeholder="Wpisz czas pomocnicz"
-                    class="project-title mb-10">Czas pomocniczy (tp):</input-component>
+                    class="project-title mb-10"
+                    >Czas pomocniczy (tp):</input-component
+                  >
                 </div>
               </q-card-section>
               <q-card-actions align="center">
-                <button-component flat v-close-popup @click="cancelAddAction">Anuluj</button-component>
-                <button-component outline @click="addAction(procedure.id)">Dodaj</button-component>
+                <button-component flat v-close-popup @click="cancelAddAction"
+                  >Anuluj</button-component
+                >
+                <button-component outline @click="addAction(procedure.id)"
+                  >Dodaj</button-component
+                >
               </q-card-actions>
             </q-card>
           </q-dialog>
         </div>
-        <div style="display: flex; justify-content: space-between;margin-top: 30px;">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+          "
+        >
           <button-component
             flat
             @click="cancelAddNewOperation"
-            style="padding-left: 0;">
+            style="padding-left: 0"
+          >
             Anuluj
           </button-component>
           <div>
             <button-component
               flat
               @click="addProcedure"
-              style=" align-self: flex-end;">
+              style="align-self: flex-end"
+            >
               <img
                 src="../assets/flat-plus-ico.svg"
                 style="width: 20px; height: 20px"
-                alt="ad" />
+                alt="ad"
+              />
               Dodaj zabieg montażowy
             </button-component>
-            <button-component
-              @click="addNewOperation">
+            <button-component @click="addNewOperation">
               Dodaj
             </button-component>
           </div>
@@ -314,12 +407,12 @@
       </div>
     </div>
     <div v-if="operations.length > 0">
-      <h3 style="font-size: 24px;line-height: 26px;margin: 30px 0 10px 0;">Podgląd karty technologicznej:</h3>
+      <h3 style="font-size: 24px; line-height: 26px; margin: 30px 0 10px 0">
+        Podgląd karty technologicznej:
+      </h3>
       <div class="preview-technolgical-card">
         <div class="header">
-          <div class="place label">
-            Politechnika Krakowska
-          </div>
+          <div class="place label">Politechnika Krakowska</div>
           <div class="title label">
             <p>Karta technologiczna montażu</p>
           </div>
@@ -337,18 +430,10 @@
           </div>
         </div>
         <div class="description-rows-wrap">
-          <div class="operation-number">
-            Nr operacji
-          </div>
-          <div class="operation-content">
-            Treść operacji
-          </div>
-          <div class="position">
-            Stanowisko
-          </div>
-          <div class="position-symbol">
-            Symbol stanowiska
-          </div>
+          <div class="operation-number">Nr operacji</div>
+          <div class="operation-content">Treść operacji</div>
+          <div class="position">Stanowisko</div>
+          <div class="position-symbol">Symbol stanowiska</div>
           <div class="time-norms">
             <div>Normy czasu</div>
             <div class="specific-times">
@@ -358,7 +443,11 @@
             </div>
           </div>
         </div>
-        <div v-if="operations.length > 0" v-for="operation in operations" class="rows-wrap">
+        <div
+          v-if="operations.length > 0"
+          v-for="operation in operations"
+          class="rows-wrap"
+        >
           <div class="operation-number">
             {{ operation.operationNumber }}
           </div>
@@ -395,7 +484,7 @@ const $q = useQuasar();
 const route = useRoute();
 
 const project = ref(null);
-const projectId = ref(null)
+const projectId = ref(null);
 onMounted(async () => {
   projectId.value = route.params.projectId;
 
@@ -403,12 +492,12 @@ onMounted(async () => {
     try {
       const instance = createInstance();
       const result = await instance.get("/project/" + projectId.value);
-      project.value = result.data.project
+      project.value = result.data.project;
     } catch (err) {
       console.log(err);
     }
   }
-})
+});
 
 //Interactions with operations
 const operations = ref([]);
@@ -417,35 +506,61 @@ const isAddNewOperation = ref(false);
 let generalProcedureNumber = 1;
 const newOperation = ref({
   id: operations.value.length + 1,
-  operationNumber: operations.value.length > 0 ? operations.value[operations.value.length - 1].operationNumber + 10 : 10,
-  operationContent: '',
-  position: '',
-  positionSymbol: '',
+  operationNumber:
+    operations.value.length > 0
+      ? operations.value[operations.value.length - 1].operationNumber + 10
+      : 10,
+  operationContent: "",
+  position: "",
+  positionSymbol: "",
   tpz: 0,
   tj: 0,
   Nt: 0,
-  procedures: [{ id: 1, generalNumber: generalProcedureNumber, number: 1, name: '', actions: [], }],
-})
+  procedures: [
+    {
+      id: 1,
+      generalNumber: generalProcedureNumber,
+      number: 1,
+      name: "",
+      actions: [],
+    },
+  ],
+});
 
 const clearAllFields = () => {
-  newOperation.value.id = operations.value.length + 1
-  newOperation.value.operationNumber = operations.value.length > 0 ? operations.value[operations.value.length - 1].operationNumber + 10 : 10
-  newOperation.value.operationContent = ''
-  newOperation.value.position = ''
-  newOperation.value.positionSymbol = ''
-  newOperation.value.tpz = 0
-  newOperation.value.tj = 0
-  newOperation.value.Nt = 0
-  newOperation.value.procedures = [{ id: 1, generalNumber: generalProcedureNumber, number: 1, name: '', actions: [], }]
-}
+  newOperation.value.id = operations.value.length + 1;
+  newOperation.value.operationNumber =
+    operations.value.length > 0
+      ? operations.value[operations.value.length - 1].operationNumber + 10
+      : 10;
+  newOperation.value.operationContent = "";
+  newOperation.value.position = "";
+  newOperation.value.positionSymbol = "";
+  newOperation.value.tpz = 0;
+  newOperation.value.tj = 0;
+  newOperation.value.Nt = 0;
+  newOperation.value.procedures = [
+    {
+      id: 1,
+      generalNumber: generalProcedureNumber,
+      number: 1,
+      name: "",
+      actions: [],
+    },
+  ];
+};
 
 const cancelAddNewOperation = () => {
-  isAddNewOperation.value = false
+  isAddNewOperation.value = false;
   clearAllFields();
-}
+};
 
 const addNewOperation = () => {
-  if (newOperation.value.operationContent !== '' && newOperation.value.position !== '' && newOperation.value.positionSymbol !== '') {
+  if (
+    newOperation.value.operationContent !== "" &&
+    newOperation.value.position !== "" &&
+    newOperation.value.positionSymbol !== ""
+  ) {
     operations.value.push({
       id: newOperation.value.id,
       operationNumber: newOperation.value.operationNumber,
@@ -456,19 +571,18 @@ const addNewOperation = () => {
       tj: newOperation.value.tj,
       Nt: newOperation.value.Nt,
       procedures: newOperation.value.procedures,
-      actions: newOperation.value.actions
-    })
+    });
     isAddNewOperation.value = false;
     clearAllFields();
+    console.log(operations.value);
   } else {
     $q.notify({
       position: "top-right",
-      message:
-        "Uzupełnij wszystkie obowiązkowe pola!",
+      message: "Uzupełnij wszystkie obowiązkowe pola!",
       color: "red",
     });
   }
-}
+};
 
 const deleteOperation = (id) => {
   const index = operations.value
@@ -478,43 +592,84 @@ const deleteOperation = (id) => {
     .indexOf(id);
   operations.value.splice(index, 1);
   clearAllFields();
-}
+};
 
 //interactions with procedures
 const addProcedure = () => {
-  ++generalProcedureNumber
-  newOperation.value.procedures.push({ id: newOperation.value.procedures.length + 1, generalProcedureNumber: generalProcedureNumber, number: newOperation.value.procedures.length + 1, name: '', actions: [] })
-}
+  ++generalProcedureNumber;
+  newOperation.value.procedures.push({
+    id: newOperation.value.procedures.length + 1,
+    generalProcedureNumber: generalProcedureNumber,
+    number: newOperation.value.procedures.length + 1,
+    name: "",
+    actions: [],
+  });
+  console.log(operations.value);
+};
+
+const deleteProcedure = (id) => {
+  const index = newOperation.value.procedures
+    .map((procedure) => {
+      return procedure.id;
+    })
+    .indexOf(id);
+
+  console.log(
+    index,
+    newOperation.value.procedures.length - 1,
+    newOperation.value.procedures
+  );
+
+  let newTable;
+  if (index !== newOperation.value.procedures.length - 1) {
+    const newProcedures = newOperation.value.procedures.filter(
+      (procedure) => procedure.id > id
+    );
+    newTable = newProcedures.map((procedure) => {
+      return {
+        id: procedure.id - 1,
+        generalProcedureNumber: procedure.generalProcedureNumber - 1,
+        number: procedure.number - 1,
+        name: procedure.name,
+        actions: procedure.actions,
+      };
+    });
+  }
+  newOperation.value.procedures.splice(index, 1);
+  if (index !== newOperation.value.procedures.length - 1) {
+    newOperation.value.procedures = newTable;
+  }
+};
 
 //Interactions with actions
 const isAddAction = ref(false);
 let generalActionNumber = 1;
 const newAction = ref({
   generalOperationNumber: generalActionNumber,
-  actionType: 'auxiliary',
-  actionContent: '',
-  assemblyTool: '',
-  parameters: '',
+  actionType: "auxiliary",
+  actionContent: "",
+  assemblyTool: "",
+  parameters: "",
   tg: 0,
-  tp: 0
-})
+  tp: 0,
+});
 
 const clearNewAction = () => {
-  newAction.value.actionType = 'auxiliary'
-  newAction.value.actionContent = ''
-  newAction.value.assemblyTool = ''
-  newAction.value.parameters = ''
-  newAction.value.tg = ''
-  newAction.value.tp = ''
-}
+  newAction.value.actionType = "auxiliary";
+  newAction.value.actionContent = "";
+  newAction.value.assemblyTool = "";
+  newAction.value.parameters = "";
+  newAction.value.tg = "";
+  newAction.value.tp = "";
+};
 
 const cancelAddAction = () => {
-  isAddAction.value = false
+  isAddAction.value = false;
   clearNewAction();
-}
+};
 
 const addAction = (id) => {
-  ++generalActionNumber
+  ++generalActionNumber;
   newOperation.value.procedures[id - 1].actions.push({
     id: newOperation.value.procedures[id - 1].actions.length + 1,
     action: newOperation.value.procedures[id - 1].actions.length + 1,
@@ -527,8 +682,8 @@ const addAction = (id) => {
   });
 
   isAddAction.value = false;
-  clearNewAction()
-}
+  clearNewAction();
+};
 
 const deleteAction = (procedureId, actionId) => {
   const index = newOperation.value.procedures[procedureId - 1].actions
@@ -538,7 +693,7 @@ const deleteAction = (procedureId, actionId) => {
     .indexOf(actionId);
 
   newOperation.value.actions.splice(index, 1);
-}
+};
 
 const operationsColumns = [
   {
@@ -604,7 +759,7 @@ const operationsColumns = [
     style: "width: 130px",
     sortable: false,
   },
-]
+];
 
 const actionsColumns = [
   {
@@ -694,7 +849,7 @@ const actionsColumns = [
     style: "width: 130px",
     sortable: false,
   },
-]
+];
 </script>
 
 <style lang="scss">
@@ -758,7 +913,7 @@ const actionsColumns = [
     border-bottom: 2px solid #000;
     display: flex;
 
-    &>div {
+    & > div {
       min-height: 100%;
       width: calc(100% / 5);
       text-align: center;
@@ -821,7 +976,7 @@ const actionsColumns = [
     display: flex;
     background-color: $dark-grey;
 
-    &>div {
+    & > div {
       min-height: 100%;
       width: calc(100% / 5);
       text-align: center;
@@ -849,7 +1004,7 @@ const actionsColumns = [
       flex-direction: column;
       border-right: none;
 
-      &>div {
+      & > div {
         min-height: 50%;
       }
 
@@ -882,7 +1037,7 @@ const actionsColumns = [
   .rows-wrap {
     background-color: transparent;
 
-    &>div {
+    & > div {
       font-weight: 400;
     }
 
@@ -891,7 +1046,7 @@ const actionsColumns = [
       flex-direction: row;
       align-items: center;
 
-      &>div {
+      & > div {
         min-height: 100%;
         width: calc(100% / 3);
         display: flex;
