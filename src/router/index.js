@@ -12,7 +12,8 @@ import AddAssemblyStructure from "../pages/AddAssemblyStructure.vue";
 import PriviewAssemblyStructure from "../pages/PreviewAssemblyStructure.vue";
 import AddGraphicAssemblyPlan from "../pages/AddGraphicAssemblyPlan.vue";
 import AddTechnologicalDocumentations from "../pages/AddTechnologicalDocumentations.vue";
-import AddInstructionCards from "../pages/AddInstructionCards.vue";
+import PreviewTechnologicalCard from "../pages/PreviewTechnologicalCard.vue";
+import PreviewInstructionCards from "../pages/PreviewInstructionCards.vue";
 import { useUserStore } from "../store/user";
 
 const routes = [
@@ -65,9 +66,14 @@ const routes = [
         component: AddTechnologicalDocumentations,
       },
       {
-        path: "/:projectId/add-instruction-cards",
-        name: "add-instruction-cards",
-        component: AddInstructionCards,
+        path: "/:projectId/preview-instruction-cards",
+        name: "preview-instruction-cards",
+        component: PreviewInstructionCards,
+      },
+      {
+        path: "/:projectId/preview-technological-card",
+        name: "preview-technological-card",
+        component: PreviewTechnologicalCard,
       },
       {
         path: "/preview-assembly-structure",

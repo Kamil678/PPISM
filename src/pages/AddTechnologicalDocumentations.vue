@@ -1,5 +1,10 @@
 <template>
   <div class="page">
+    <div style="display: flex; align-items: center; justify-content: end;">
+      <button-component flat @click="router.replace('/projects')" style="padding-left: 0; margin-right: 10px;">Anuluj</button-component>
+      <button-component v-if="technologicalDocumentationsId === null" outline @click="saveTechnologicalDocumentations">Zapisz dokumentacje technologiczną</button-component>
+      <button-component v-else outline @click="editTechnologicalDocumentations">Edytuj dokumentacje technologiczną</button-component>
+    </div>
     <div class="operations-wrap">
       <h3>Operacje montażowe:</h3>
       <q-table
@@ -15,8 +20,7 @@
         binary-state-sort
         flat
         no-data-label="Brak operacji"
-        class="operations-table"
-      >
+        class="operations-table">
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th auto-width />
@@ -32,13 +36,11 @@
                 is-tooltip
                 tooltip-text="Pokaż szczegóły projektu"
                 @click="props.expand = !props.expand"
-                style="padding-left: 0"
-              >
+                style="padding-left: 0">
                 <img
                   src="../assets/plus-ico.svg"
                   style="width: 20px; height: 20px"
-                  alt="ad"
-                />
+                  alt="ad" />
               </button-with-icon>
             </q-td>
             <q-td key="operationNumber" :props="props">
@@ -67,26 +69,22 @@
                 <button-with-icon
                   is-tooltip
                   tooltip-text="Edytuj operację montażową"
-                  @click=""
-                  class="hide-menu"
-                >
+                  @click="showEditOperation(props.row)"
+                  class="hide-menu">
                   <img
                     src="../assets/ic_edit.svg"
                     style="width: 18px; height: 18px"
-                    alt="edit"
-                  />
+                    alt="edit" />
                 </button-with-icon>
                 <button-with-icon
                   is-tooltip
                   tooltip-text="Usuń operację montażową"
                   @click="deleteOperation(props.row.id)"
-                  class="hide-menu"
-                >
+                  class="hide-menu">
                   <img
                     src="../assets/trash-ico.svg"
                     style="width: 18px; height: 18px"
-                    alt="edit"
-                  />
+                    alt="edit" />
                 </button-with-icon>
               </div>
             </q-td>
@@ -108,15 +106,13 @@
                 flat
                 no-data-label="Brak zabiegów montażowych"
                 style="padding: 10px 75px"
-                class="operations-table"
-              >
+                class="operations-table">
                 <template v-slot:header="props">
                   <q-tr :props="props">
                     <q-th
                       v-for="col in props.cols"
                       :key="col.name"
-                      :props="props"
-                    >
+                      :props="props">
                       {{ col.label }}
                     </q-th>
                   </q-tr>
@@ -163,56 +159,42 @@
       <button-component
         flat
         @click="isAddNewOperation = true"
-        style="padding-right: 0; align-self: flex-end"
-      >
+        style="padding-right: 0; align-self: flex-end">
         <img
           src="../assets/flat-plus-ico.svg"
           style="width: 20px; height: 20px"
-          alt="ad"
-        />
+          alt="ad" />
         Dodaj nową operację
       </button-component>
       <div v-if="isAddNewOperation" class="add-operation-wrap">
         <input-component
           v-model="newOperation.operationContent"
           placeholder="Wpisz treść operacji"
-          class="project-title mb-10"
-          >Treść operacji:</input-component
-        >
+          class="project-title mb-10">Treść operacji:</input-component>
         <input-component
           v-model="newOperation.position"
           placeholder="Wpisz stanowisko"
-          class="project-title mb-10"
-          >Stanowisko:</input-component
-        >
+          class="project-title mb-10">Stanowisko:</input-component>
         <input-component
           v-model="newOperation.positionSymbol"
           placeholder="Wpisz symbol stanowiska"
-          class="project-title mb-10"
-          >Symbol stanowiska:</input-component
-        >
+          class="project-title mb-10">Symbol stanowiska:</input-component>
         <input-component
           v-model="newOperation.tpz"
           type="number"
           placeholder="Wpisz przgotowawczo-zakończeniowy"
-          class="project-title mb-10"
-          >Czas przgotowawczo-zakończeniowy (tpz):</input-component
-        >
+          class="project-title mb-10">Czas przgotowawczo-zakończeniowy (tpz):</input-component>
         <input-component
           v-model="newOperation.tj"
           type="number"
           placeholder="Wpisz czas jednostkowy"
-          class="project-title mb-10"
-          >Czas jednostkowy (tj):</input-component
-        >
+          class="project-title mb-10">Czas jednostkowy (tj):</input-component>
 
         <input-component
           v-model="newOperation.Nt"
           type="number"
           placeholder="Wpisz norme czasu"
-          class="project-title mb-10"
-          >Norma czasu (Nt):</input-component
-        >
+          class="project-title mb-10">Norma czasu (Nt):</input-component>
         <div class="separator"></div>
 
         <!-- Adding procedure -->
@@ -220,8 +202,7 @@
           v-if="newOperation.procedures.length > 0"
           v-for="procedure in newOperation.procedures"
           :key="procedure.id"
-          style="display: flex; flex-direction: column"
-        >
+          style="display: flex; flex-direction: column">
           <p class="procedure-title">Zabieg {{ procedure.number }}</p>
           <div
             style="
@@ -229,28 +210,23 @@
               align-items: center;
               justify-content: space-between;
               gap: 0 50px;
-            "
-          >
+            ">
             <div style="width: 100%">
               <input-component
                 v-model="procedure.name"
                 placeholder="Wpisz treść zabiegu/zadania montażowego"
-                class="project-title"
-                >Nazwa zabiegu/zadania:</input-component
-              >
+                class="project-title">Nazwa zabiegu/zadania:</input-component>
             </div>
             <button-with-icon
               is-tooltip
               tooltip-text="Usuń zabieg/zadanie montażowe"
               @click="deleteProcedure(procedure.id)"
               class="hide-menu"
-              style="padding-right: 0"
-            >
+              style="padding-right: 0">
               <img
                 src="../assets/trash-ico.svg"
                 style="width: 24px; height: 24px"
-                alt="edit"
-              />
+                alt="edit" />
             </button-with-icon>
           </div>
           <div v-if="procedure.actions.length > 0" style="margin-top: 20px">
@@ -262,8 +238,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-              "
-            >
+              ">
               <p>
                 <span>{{ action.action }}.</span> {{ action.actionContent }}
               </p>
@@ -272,34 +247,29 @@
                 tooltip-text="Usuń czynność"
                 @click="deleteAction(procedure.id, action.id)"
                 class="hide-menu"
-                style="padding-right: 0"
-              >
+                style="padding-right: 0">
                 <img
                   src="../assets/trash-ico.svg"
                   style="width: 18px; height: 18px"
-                  alt="edit"
-                />
+                  alt="edit" />
               </button-with-icon>
             </div>
           </div>
           <button-component
             flat
             @click="isAddAction = true"
-            style="padding-right: 0; align-self: flex-end"
-          >
+            style="padding-right: 0; align-self: flex-end">
             <img
               src="../assets/flat-plus-ico.svg"
               style="width: 20px; height: 20px"
-              alt="ad"
-            />
+              alt="ad" />
             Dodaj czynność montażową
           </button-component>
           <q-dialog
             no-esc-dismiss
             no-backdrop-dismiss
             :model-value="isAddAction"
-            class="add-procedure"
-          >
+            class="add-procedure">
             <q-card>
               <q-card-section>
                 <div>
@@ -310,64 +280,47 @@
                       v-model="newAction.actionType"
                       val="auxiliary"
                       label="Pomocnicza"
-                      style="margin-right: 10px"
-                    />
+                      style="margin-right: 10px" />
                     <q-radio
                       dense
                       v-model="newAction.actionType"
                       val="main"
                       label="Główna"
-                      style="margin-right: 10px"
-                    />
+                      style="margin-right: 10px" />
                     <q-radio
                       dense
                       v-model="newAction.actionType"
                       val="control"
-                      label="Kontrolno-pomiarowa"
-                    />
+                      label="Kontrolno-pomiarowa" />
                   </div>
                   <input-component
                     v-model="newAction.actionContent"
                     placeholder="Wpisz treść czynności"
-                    class="project-title mb-10"
-                    >Nazwa czynności:</input-component
-                  >
+                    class="project-title mb-10">Nazwa czynności:</input-component>
                   <input-component
                     v-model="newAction.assemblyTool"
                     placeholder="Wpisz narzędzie montażowe/pomiarowo-kontrolne"
-                    class="project-title mb-10"
-                    >Narzędzie montażowe/pomiarowo-kontrolne:</input-component
-                  >
+                    class="project-title mb-10">Narzędzie montażowe/pomiarowo-kontrolne:</input-component>
                   <input-component
                     v-model="newAction.parameters"
                     placeholder="Wpisz parametry realizacji połączenia montażowego"
-                    class="project-title mb-10"
-                    >Parametry realizacji połączenia
-                    montażowego:</input-component
-                  >
+                    class="project-title mb-10">Parametry realizacji połączenia
+                    montażowego:</input-component>
                   <input-component
                     v-model="newAction.tg"
                     type="number"
                     placeholder="Wpisz czas główny"
-                    class="project-title mb-10"
-                    >Czas główny (tg):</input-component
-                  >
+                    class="project-title mb-10">Czas główny (tg):</input-component>
                   <input-component
                     v-model="newAction.tp"
                     type="number"
                     placeholder="Wpisz czas pomocnicz"
-                    class="project-title mb-10"
-                    >Czas pomocniczy (tp):</input-component
-                  >
+                    class="project-title mb-10">Czas pomocniczy (tp):</input-component>
                 </div>
               </q-card-section>
               <q-card-actions align="center">
-                <button-component flat v-close-popup @click="cancelAddAction"
-                  >Anuluj</button-component
-                >
-                <button-component outline @click="addAction(procedure.id)"
-                  >Dodaj</button-component
-                >
+                <button-component flat v-close-popup @click="cancelAddAction">Anuluj</button-component>
+                <button-component outline @click="addAction(procedure.id)">Dodaj</button-component>
               </q-card-actions>
             </q-card>
           </q-dialog>
@@ -377,30 +330,29 @@
             display: flex;
             justify-content: space-between;
             margin-top: 30px;
-          "
-        >
+          ">
           <button-component
             flat
             @click="cancelAddNewOperation"
-            style="padding-left: 0"
-          >
+            style="padding-left: 0">
             Anuluj
           </button-component>
           <div>
             <button-component
               flat
               @click="addProcedure"
-              style="align-self: flex-end"
-            >
+              style="align-self: flex-end">
               <img
                 src="../assets/flat-plus-ico.svg"
                 style="width: 20px; height: 20px"
-                alt="ad"
-              />
+                alt="ad" />
               Dodaj zabieg montażowy
             </button-component>
-            <button-component @click="addNewOperation">
+            <button-component v-if="editOperation === null" @click="addNewOperation">
               Dodaj
+            </button-component>
+            <button-component v-else @click="onClickEditOperation">
+              Edytuj
             </button-component>
           </div>
         </div>
@@ -446,8 +398,7 @@
         <div
           v-if="operations.length > 0"
           v-for="operation in operations"
-          class="rows-wrap"
-        >
+          class="rows-wrap">
           <div class="operation-number">
             {{ operation.operationNumber }}
           </div>
@@ -468,12 +419,18 @@
         </div>
       </div>
     </div>
+    <!-- <div style="display:flex;align-items: center; justify-content: space-between; margin-top: 30px;">
+      <button-component flat @click="router.replace('/projects')" style="padding-left: 0;">Anuluj</button-component>
+      <button-component v-if="technologicalDocumentationsId === null" outline @click="saveAssemblyStructure">Zapisz dokumentacje technologiczną</button-component>
+      <button-component v-else outline @click="editAssemblyStructure">Edytuj dokumentacje technologiczną</button-component>
+    </div> -->
   </div>
 </template>
 
 <script setup>
 import { useQuasar } from "quasar";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, toRaw } from "vue";
+import router from "../router";
 import { useRoute } from "vue-router";
 import InputComponent from "../components/InputComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
@@ -485,6 +442,7 @@ const route = useRoute();
 
 const project = ref(null);
 const projectId = ref(null);
+const technologicalDocumentationsId = ref(null);
 onMounted(async () => {
   projectId.value = route.params.projectId;
 
@@ -497,6 +455,45 @@ onMounted(async () => {
       console.log(err);
     }
   }
+
+  if (window.location.search.includes("id")) {
+    const searchParams = window.location.search;
+    technologicalDocumentationsId.value = searchParams.split("=")[1];
+  }
+
+  if (technologicalDocumentationsId.value) {
+    try {
+      const instance = createInstance();
+      const result = await instance.get("/technological-documentations/" + technologicalDocumentationsId.value);
+
+      operations.value = result.data.technologicalDocumentations.operations;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  newOperation.value = {
+    id: operations.value.length + 1,
+    operationNumber:
+      operations.value.length > 0
+        ? operations.value[operations.value.length - 1].operationNumber + 10
+        : 10,
+    operationContent: "",
+    position: "",
+    positionSymbol: "",
+    tpz: 0,
+    tj: 0,
+    Nt: 0,
+    procedures: [
+      {
+        id: 1,
+        generalNumber: generalProcedureNumber,
+        number: 1,
+        name: "",
+        actions: [],
+      },
+    ],
+  }
 });
 
 //Interactions with operations
@@ -504,28 +501,7 @@ const operations = ref([]);
 
 const isAddNewOperation = ref(false);
 let generalProcedureNumber = 1;
-const newOperation = ref({
-  id: operations.value.length + 1,
-  operationNumber:
-    operations.value.length > 0
-      ? operations.value[operations.value.length - 1].operationNumber + 10
-      : 10,
-  operationContent: "",
-  position: "",
-  positionSymbol: "",
-  tpz: 0,
-  tj: 0,
-  Nt: 0,
-  procedures: [
-    {
-      id: 1,
-      generalNumber: generalProcedureNumber,
-      number: 1,
-      name: "",
-      actions: [],
-    },
-  ],
-});
+const newOperation = ref(null);
 
 const clearAllFields = () => {
   newOperation.value.id = operations.value.length + 1;
@@ -555,13 +531,24 @@ const cancelAddNewOperation = () => {
   clearAllFields();
 };
 
+
+const checkOperationData = () => {
+  const tableProceduresWithoutActions = []
+  newOperation.value.procedures.forEach(procedure => {
+    if (procedure.actions.length === 0) {
+      tableProceduresWithoutActions.push(procedure);
+    }
+  })
+  if (newOperation.value.operationContent === "" || newOperation.value.position === "" || newOperation.value.positionSymbol === "" || tableProceduresWithoutActions.length !== 0) {
+    return false
+  } else {
+    return true
+  }
+}
+
 const addNewOperation = () => {
-  if (
-    newOperation.value.operationContent !== "" &&
-    newOperation.value.position !== "" &&
-    newOperation.value.positionSymbol !== ""
-  ) {
-    operations.value.push({
+  if (checkOperationData()) {
+    operations.value.push(toRaw({
       id: newOperation.value.id,
       operationNumber: newOperation.value.operationNumber,
       operationContent: newOperation.value.operationContent,
@@ -571,14 +558,13 @@ const addNewOperation = () => {
       tj: newOperation.value.tj,
       Nt: newOperation.value.Nt,
       procedures: newOperation.value.procedures,
-    });
+    }));
     isAddNewOperation.value = false;
     clearAllFields();
-    console.log(operations.value);
   } else {
     $q.notify({
       position: "top-right",
-      message: "Uzupełnij wszystkie obowiązkowe pola!",
+      message: "Uzupełnij wszystkie obowiązkowe pola i pamiętaj, że zabieg/zadanie montażowe musi mieć przynajmniej jedną czynność montażową!",
       color: "red",
     });
   }
@@ -590,9 +576,61 @@ const deleteOperation = (id) => {
       return operation.id;
     })
     .indexOf(id);
-  operations.value.splice(index, 1);
+
+  if (index !== operations.value.length - 1) {
+    operations.value.splice(index, 1);
+    operations.value.forEach(operation => {
+      if (operation.id > id) {
+        operation.id = operation.id - 1
+        operation.operationNumber = operation.operationNumber - 10
+      }
+    })
+  } else {
+    operations.value.splice(index, 1);
+  }
+
   clearAllFields();
 };
+
+const editOperation = ref(null);
+const showEditOperation = (operation) => {
+  newOperation.value.id = operation.id;
+  newOperation.value.operationNumber = operation.operationNumber
+  newOperation.value.operationContent = operation.operationContent;
+  newOperation.value.position = operation.position;
+  newOperation.value.positionSymbol = operation.positionSymbol;
+  newOperation.value.tpz = operation.tpz;
+  newOperation.value.tj = operation.tj;
+  newOperation.value.Nt = operation.Nt
+  newOperation.value.procedures = operation.procedures;
+
+  editOperation.value = operation;
+  isAddNewOperation.value = true;
+}
+
+const onClickEditOperation = () => {
+  const index = operations.value
+    .map((operation) => {
+      return operation.id;
+    })
+    .indexOf(editOperation.value.id);
+
+  const updatedOperation = {
+    id: newOperation.value.id,
+    operationNumber: newOperation.value.operationNumber,
+    operationContent: newOperation.value.operationContent,
+    position: newOperation.value.position,
+    positionSymbol: newOperation.value.positionSymbol,
+    tpz: newOperation.value.tpz,
+    tj: newOperation.value.tj,
+    Nt: newOperation.value.Nt,
+    procedures: newOperation.value.procedures,
+  }
+
+  operations.value.splice(index, 1, updatedOperation)
+  isAddNewOperation.value = false;
+  clearAllFields();
+}
 
 //interactions with procedures
 const addProcedure = () => {
@@ -604,7 +642,6 @@ const addProcedure = () => {
     name: "",
     actions: [],
   });
-  console.log(operations.value);
 };
 
 const deleteProcedure = (id) => {
@@ -614,30 +651,17 @@ const deleteProcedure = (id) => {
     })
     .indexOf(id);
 
-  console.log(
-    index,
-    newOperation.value.procedures.length - 1,
-    newOperation.value.procedures
-  );
-
-  let newTable;
   if (index !== newOperation.value.procedures.length - 1) {
-    const newProcedures = newOperation.value.procedures.filter(
-      (procedure) => procedure.id > id
-    );
-    newTable = newProcedures.map((procedure) => {
-      return {
-        id: procedure.id - 1,
-        generalProcedureNumber: procedure.generalProcedureNumber - 1,
-        number: procedure.number - 1,
-        name: procedure.name,
-        actions: procedure.actions,
-      };
-    });
-  }
-  newOperation.value.procedures.splice(index, 1);
-  if (index !== newOperation.value.procedures.length - 1) {
-    newOperation.value.procedures = newTable;
+    newOperation.value.procedures.splice(index, 1);
+    newOperation.value.procedures.forEach(procedure => {
+      if (procedure.id > id) {
+        procedure.id = procedure.id - 1
+        procedure.generalNumber = procedure.generalProcedureNumber - 1;
+        procedure.number = procedure.number - 1
+      }
+    })
+  } else {
+    newOperation.value.procedures.splice(index, 1);
   }
 };
 
@@ -645,7 +669,7 @@ const deleteProcedure = (id) => {
 const isAddAction = ref(false);
 let generalActionNumber = 1;
 const newAction = ref({
-  generalOperationNumber: generalActionNumber,
+  generalActionNumber: generalActionNumber,
   actionType: "auxiliary",
   actionContent: "",
   assemblyTool: "",
@@ -659,8 +683,8 @@ const clearNewAction = () => {
   newAction.value.actionContent = "";
   newAction.value.assemblyTool = "";
   newAction.value.parameters = "";
-  newAction.value.tg = "";
-  newAction.value.tp = "";
+  newAction.value.tg = 0;
+  newAction.value.tp = 0;
 };
 
 const cancelAddAction = () => {
@@ -672,6 +696,7 @@ const addAction = (id) => {
   ++generalActionNumber;
   newOperation.value.procedures[id - 1].actions.push({
     id: newOperation.value.procedures[id - 1].actions.length + 1,
+    generalActionNumber: generalActionNumber,
     action: newOperation.value.procedures[id - 1].actions.length + 1,
     actionType: newAction.value.actionType,
     actionContent: newAction.value.actionContent,
@@ -692,7 +717,21 @@ const deleteAction = (procedureId, actionId) => {
     })
     .indexOf(actionId);
 
-  newOperation.value.actions.splice(index, 1);
+
+
+  if (index !== newOperation.value.procedures[procedureId - 1].actions - 1) {
+    newOperation.value.procedures[procedureId - 1].actions.splice(index, 1);
+    newOperation.value.procedures[procedureId - 1].actions.forEach(action => {
+      if (action.id > actionId) {
+        action.id = action.id - 1
+        action.action = action.action - 1
+        action.generalActionNumber = action.generalActionNumber - 1
+      }
+    })
+  } else {
+    newOperation.value.procedures[procedureId - 1].actions.splice(index, 1);
+  }
+  console.log(newOperation.value.procedures[procedureId - 1].actions)
 };
 
 const operationsColumns = [
@@ -850,6 +889,45 @@ const actionsColumns = [
     sortable: false,
   },
 ];
+
+//comunications with api
+const saveTechnologicalDocumentations = async () => {
+  if (operations.value.length > 0) {
+    try {
+      const instance = createInstance();
+      instance.post("technological-documentations", { operations: operations.value, project: projectId.value });
+      router.replace("/projects");
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    $q.notify({
+      position: "top-right",
+      message:
+        "Nie udało się zapisać dokumentacji technologicznej",
+      color: "red",
+    });
+  }
+}
+
+const editTechnologicalDocumentations = () => {
+  if (operations.value.length > 0) {
+    try {
+      const instance = createInstance();
+      instance.put(`technological-documentations/${technologicalDocumentationsId.value}`, { operations: operations.value, project: projectId.value });
+      router.replace("/projects");
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    $q.notify({
+      position: "top-right",
+      message:
+        "Nie udało się edytować dokumentacji technologicznej",
+      color: "red",
+    });
+  }
+}
 </script>
 
 <style lang="scss">
@@ -900,165 +978,6 @@ const actionsColumns = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-}
-
-.preview-technolgical-card {
-  margin: 0 auto;
-  border: 2px solid #000;
-  width: 70%;
-
-  .header {
-    min-height: 100px;
-    border-bottom: 2px solid #000;
-    display: flex;
-
-    & > div {
-      min-height: 100%;
-      width: calc(100% / 5);
-      text-align: center;
-      border-right: 2px solid #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 500;
-
-      .data {
-        font-weight: 400;
-      }
-    }
-
-    .title {
-      font-size: 20px;
-    }
-
-    .product-name,
-    .picture-number,
-    .size-series {
-      div {
-        min-height: 50%;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-
-    .title {
-      width: 50%;
-    }
-
-    .size-series {
-      border-right: none;
-    }
-
-    .label {
-      background-color: $dark-grey;
-    }
-
-    .product-name,
-    .picture-number,
-    .size-series {
-      display: flex;
-      flex-direction: column;
-
-      .label {
-        min-height: 50%;
-        border-bottom: 2px solid #000;
-      }
-    }
-  }
-
-  .description-rows-wrap,
-  .rows-wrap {
-    min-height: 100px;
-    border-bottom: 2px solid #000;
-    display: flex;
-    background-color: $dark-grey;
-
-    & > div {
-      min-height: 100%;
-      width: calc(100% / 5);
-      text-align: center;
-      border-right: 2px solid #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 500;
-
-      .data {
-        font-weight: 400;
-      }
-    }
-
-    .operation-number {
-      width: 7%;
-    }
-
-    .operation-content {
-      flex-grow: 1;
-    }
-
-    .time-norms {
-      display: flex;
-      flex-direction: column;
-      border-right: none;
-
-      & > div {
-        min-height: 50%;
-      }
-
-      div:first-child {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .specific-times {
-        border-top: 2px solid #000;
-        display: flex;
-        width: 100%;
-
-        div {
-          width: calc(100% / 3);
-          border-right: 2px solid #000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        div:last-child {
-          border-right: none !important;
-        }
-      }
-    }
-  }
-
-  .rows-wrap {
-    background-color: transparent;
-
-    & > div {
-      font-weight: 400;
-    }
-
-    .time-norms {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-
-      & > div {
-        min-height: 100%;
-        width: calc(100% / 3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-right: 2px solid #000;
-
-        &:last-child {
-          border-right: none;
-        }
-      }
-    }
   }
 }
 </style>

@@ -281,7 +281,7 @@
                 <p>Dokumentacja technologiczna:</p>
               </div>
               <button-component
-                v-if="!props.row.technologicalCard"
+                v-if="!props.row.technologicalDocumentations"
                 flat
                 @click="router.replace(`${props.row._id}/add-technological-documentations`)"
                 style="padding-right: 0">
@@ -291,11 +291,11 @@
                   alt="ad" />
                 Dodaj dokumentację technologiczną
               </button-component>
-              <!-- <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
+              <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
                 <button-with-icon
                   is-tooltip
-                  tooltip-text="Podgląd graficznego planu montażu"
-                  @click="router.replace(`/preview-assembly-structure?id=` + props.row.assemblyStructure)"
+                  tooltip-text="Podgląd karty technologicznej"
+                  @click="router.replace(`${props.row._id}/preview-technological-card?id=` + props.row.technologicalDocumentations)"
                   class="hide-menu">
                   <img
                     src="../assets/eye-ico.svg"
@@ -304,8 +304,18 @@
                 </button-with-icon>
                 <button-with-icon
                   is-tooltip
-                  tooltip-text="Edytuj graficzny plan montażu"
-                  @click="router.replace(`${props.row._id}/add-graphic-assembly-plan?id=${props.row.graphicAssemblyPlan}`)"
+                  tooltip-text="Podgląd kart instrukcyjnych"
+                  @click="router.replace(`${props.row._id}/preview-instruction-cards?id=` + props.row.technologicalDocumentations)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/eye-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
+                  tooltip-text="Edytuj dokumentacje technologiczną"
+                  @click="router.replace(`${props.row._id}/add-technological-documentations?id=${props.row.technologicalDocumentations}`)"
                   class="hide-menu">
                   <img
                     src="../assets/ic_edit.svg"
@@ -314,8 +324,8 @@
                 </button-with-icon>
                 <button-with-icon
                   is-tooltip
-                  tooltip-text="Usuń graficzny plan montażu"
-                  @click="isDeleteGraphicAssemblyPlan = true"
+                  tooltip-text="Usuń dokumentacje technologiczną"
+                  @click="isDeleteTechnologicalDocumentations = true"
                   class="hide-menu"
                   style="padding-right: 0;">
                   <img
@@ -324,12 +334,12 @@
                     alt="edit" />
                 </button-with-icon>
                 <confirm-modal
-                  v-model="isDeleteGraphicAssemblyPlan"
+                  v-model="isDeleteTechnologicalDocumentations"
                   btn-text="Usuń"
-                  modal-text="Czy na pewno chcesz usunąć graficzny plan montażu?"
+                  modal-text="Czy na pewno chcesz usunąć dokumentację technologiczna?"
                   @click-cancel="isDeleteGraphicAssemblyPlan = false"
-                  @click-confirm="confirmDeleteGraphicAssemblyPlan(props.row.graphicAssemblyPlan)" />
-              </div> -->
+                  @click-confirm="confirmDeleteTechnologicalDocumentations(props.row.technologicalDocumentations)" />
+              </div>
             </div>
           </q-td>
         </q-tr>
@@ -548,9 +558,19 @@ const confirmDeleteGraphicAssemblyPlan = async (id) => {
 //Interactions with assembly tasks table
 const assemblyTasksTable = ref(null);
 
-//Interactions with assembly tasks table
-const technologicalCard = ref(null);
-
+//Interactions with technological documentations
+const isDeleteTechnologicalDocumentations = ref(false)
+const confirmDeleteTechnologicalDocumentations = async (id) => {
+  try {
+    const instance = createInstance();
+    instance.delete("technological-documentations/" + id);
+    isDeleteTechnologicalDocumentations.value = false;
+    await getProjects();
+    window.location.reload()
+  } catch (err) {
+    console.log(err);
+  }
+};
 //Interactions with assembly tasks table
 const instructionCards = ref(null);
 </script>
