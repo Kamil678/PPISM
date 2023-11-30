@@ -68,6 +68,16 @@
               <div class="flex justify-end no-wrap" style="grid-gap: 10px">
                 <button-with-icon
                   is-tooltip
+                  tooltip-text="Dodaj graf następstw montażowych"
+                  @click="showAddAssemblySequenceGraph(props.row.id)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/plus-ico-black.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
                   tooltip-text="Edytuj operację montażową"
                   @click="showEditOperation(props.row)"
                   class="hide-menu">
@@ -166,6 +176,33 @@
           alt="ad" />
         Dodaj nową operację
       </button-component>
+      <div v-if="hasAddAssemblySequenceGraph" v-for="action in selectOperation.allActions" class="select-actions-sequence-graph">
+        <multiple-select-component
+          v-model="action.assemblySequenceGraphAfter"
+          :options-list="selectOperation.allActions"
+          option-label="actionContent"
+          is-filter>
+          <div>
+            Wybierz czynność
+            <tooltip-component
+              :tooltip-text="`Wybierz czynność, którą należy wykonać przed ${action.actionContent}`" />
+          </div>
+        </multiple-select-component>
+        <vue-mermaid-string v-if="hasAddAssemblySequenceGraph" class="graph" :value="`
+                      flowchart LR 
+                    A[Czynność przed]-->id${action.action}((${action.action}))-->B[Czynność po]`" />
+        <multiple-select-component
+          v-model="action.assemblySequenceGraphBefore"
+          :options-list="selectOperation.allActions"
+          option-label="actionContent"
+          is-filter>
+          <div>
+            Wybierz czynność
+            <tooltip-component
+              :tooltip-text="`Wybierz czynność, którą należy wykonać po ${action.actionContent}`" />
+          </div>
+        </multiple-select-component>
+      </div>
       <div v-if="isAddNewOperation" class="add-operation-wrap">
         <input-component
           v-model="newOperation.operationContent"
@@ -435,6 +472,9 @@ import { useRoute } from "vue-router";
 import InputComponent from "../components/InputComponent.vue";
 import ButtonComponent from "../components/ButtonComponent.vue";
 import ButtonWithIcon from "../components/ButtonWithIcon.vue";
+import MultipleSelectComponent from "../components/MultipleSelectComponent.vue";
+import TooltipComponent from "../components/TooltipComponent.vue";
+import VueMermaidString from 'vue-mermaid-string'
 import createInstance from "../services/apiBase";
 
 const $q = useQuasar();
@@ -546,6 +586,22 @@ const checkOperationData = () => {
   }
 }
 
+const returnAllActions = (procedures) => {
+  const localAllActions = [];
+
+  procedures.forEach(procedure => {
+    procedure.actions.forEach(action => {
+      action.id = localAllActions.length + 1;
+      action.generalActionNumber = localAllActions.length + 1
+      action.action = localAllActions.length + 1
+      action.assemblySequenceGraphBefore = null;
+      action.assemblySequenceGraphAfter = null;
+      localAllActions.push(toRaw(action));
+    })
+  })
+
+  return localAllActions
+}
 const addNewOperation = () => {
   if (checkOperationData()) {
     operations.value.push(toRaw({
@@ -558,7 +614,14 @@ const addNewOperation = () => {
       tj: newOperation.value.tj,
       Nt: newOperation.value.Nt,
       procedures: newOperation.value.procedures,
+      allActions: returnAllActions(newOperation.value.procedures),
+      // assemblySequenceGraph: returnAllActions(newOperation.value.procedures).map(action => {
+      //   return {
+
+      //   }
+      // })
     }));
+
     isAddNewOperation.value = false;
     clearAllFields();
   } else {
@@ -630,6 +693,16 @@ const onClickEditOperation = () => {
   operations.value.splice(index, 1, updatedOperation)
   isAddNewOperation.value = false;
   clearAllFields();
+}
+
+const hasAddAssemblySequenceGraph = ref(false);
+const selectOperation = ref(null)
+const showAddAssemblySequenceGraph = (operationId) => {
+  selectOperation.value = operations.value[operationId - 1];
+  hasAddAssemblySequenceGraph.value = true
+}
+const addAssemblySequenceGraph = (id) => {
+
 }
 
 //interactions with procedures
@@ -978,6 +1051,24 @@ const editTechnologicalDocumentations = () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+}
+
+.select-actions-sequence-graph {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 10px;
+  margin-bottom: 10px;
+
+  .basic-multiple-select {
+    width: 30%;
+  }
+}
+
+.graph {
+  svg {
+    width: 100%;
   }
 }
 </style>

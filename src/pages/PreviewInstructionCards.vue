@@ -65,7 +65,7 @@
             tp [s]
           </div>
         </div>
-        <div v-if="operation.procedures.length > 0" v-for="(procedure, indexProcedure) in operation.procedures">
+        <div v-if="operation.procedures.length > 0" v-for="(procedure, indexProcedure) in operation.procedures" class="row-wrap">
           <div v-for="action in procedure.actions" class="description-rows-wrap action-row">
             <div class="procedure">
               {{ indexProcedure + 1 }}
@@ -104,13 +104,80 @@ import { useRoute } from "vue-router";
 import createInstance from "../services/apiBase";
 import VueMermaidString from 'vue-mermaid-string'
 
+const variable = ref(1)
+
+const actions = [
+  {
+    action: 1,
+    before: null,
+    after: { action: 1 }
+  },
+  {
+    action: 2,
+    before: null,
+    after: { action: 2 }
+  },
+  {
+    action: 3,
+    before: { action: 1 },
+    after: { action: 4 }
+  },
+  {
+    action: 4,
+    before: { action: 3 },
+    after: { action: 5 }
+  },
+  {
+    action: 5,
+    before: { action: 4 },
+    after: { action: 8 }
+  },
+  {
+    action: 6,
+    before: { action: 2 },
+    after: { action: 8 }
+  },
+  {
+    action: 7,
+    before: null,
+    after: { action: 8 }
+  },
+]
+
 const diagram = ref(`
 flowchart LR 
-id1((1))-->id3((3))-->id4((4))-->id5((5))
-id2((2))-->id6((6))
-id7((7))-->id8((8))
-id5((5))-->id8((8))
-id6((6))-->id8((8))`)
+id${variable.value}((${variable.value}))-->id3((3))-->id4((4))-->id5((5))-->id8((8)) 
+id2((2))-->id6((6))-->id8((8))
+id7((7))-->id8((8))`)
+
+actions.forEach(action => {
+  if (action.before === null) {
+    action.text = `
+    id${action.action}((${action.action}))-->`
+  }
+  console.log(action)
+})
+
+const create = () => {
+  let diagram = `
+  flowchart LR `
+
+  const actionsAfterAndBefore = actions.filter(action => {
+    if (action.after !== null && action.before !== null) {
+      return action
+    }
+  })
+  const actionsWithoutBefore = actions.filter(action => {
+    if (action.before === null) {
+      return action
+    }
+  })
+
+  console.log(actionsAfterAndBefore, actionsWithoutBefore)
+  return diagram
+}
+
+console.log(create())
 
 const addNumber = () => {
   diagram.value = diagram.value + `
@@ -321,11 +388,6 @@ const getFirstLetters = (string) => {
 
     &.action-row {
       background-color: transparent;
-
-
-      &:last-child {
-        border-bottom: none;
-      }
     }
 
     .setting,
