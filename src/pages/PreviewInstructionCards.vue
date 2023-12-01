@@ -92,7 +92,7 @@
         </div>
       </div>
       <q-btn @click="addNumber">Add</q-btn>
-      <vue-mermaid-string :value="diagram" />
+      <vue-mermaid-string :value="create()" />
     </div>
   </div>
 </template>
@@ -109,46 +109,23 @@ const variable = ref(1)
 const actions = [
   {
     action: 1,
-    before: null,
-    after: { action: 1 }
+    after: [{ action: 3 }, { action: 4 }, { action: 5 }, { action: 8 }]
   },
   {
     action: 2,
-    before: null,
-    after: { action: 2 }
-  },
-  {
-    action: 3,
-    before: { action: 1 },
-    after: { action: 4 }
-  },
-  {
-    action: 4,
-    before: { action: 3 },
-    after: { action: 5 }
-  },
-  {
-    action: 5,
-    before: { action: 4 },
-    after: { action: 8 }
-  },
-  {
-    action: 6,
-    before: { action: 2 },
-    after: { action: 8 }
+    after: []
   },
   {
     action: 7,
-    before: null,
-    after: { action: 8 }
-  },
+    after: [{ action: 8 }]
+  }
 ]
 
-const diagram = ref(`
-flowchart LR 
-id${variable.value}((${variable.value}))-->id3((3))-->id4((4))-->id5((5))-->id8((8)) 
-id2((2))-->id6((6))-->id8((8))
-id7((7))-->id8((8))`)
+// const diagram = ref(`
+// flowchart LR 
+// id${variable.value}((${variable.value}))-->id3((3))-->id4((4))-->id5((5))-->id8((8)) 
+// id2((2))-->id6((6))-->id8((8))
+// id7((7))-->id8((8))`)
 
 actions.forEach(action => {
   if (action.before === null) {
@@ -162,18 +139,20 @@ const create = () => {
   let diagram = `
   flowchart LR `
 
-  const actionsAfterAndBefore = actions.filter(action => {
-    if (action.after !== null && action.before !== null) {
-      return action
+  actions.forEach(action => {
+    let text = `
+    id${action.action}((${action.action}))-->`
+    if (action.after.length > 0) {
+      action.after.forEach((afterAction, index) => {
+        if (index === action.after.length - 1) {
+          text += `id${afterAction.action}((${afterAction.action}))`
+        } else {
+          text += `id${afterAction.action}((${afterAction.action}))-->`
+        }
+      })
     }
+    diagram += text
   })
-  const actionsWithoutBefore = actions.filter(action => {
-    if (action.before === null) {
-      return action
-    }
-  })
-
-  console.log(actionsAfterAndBefore, actionsWithoutBefore)
   return diagram
 }
 

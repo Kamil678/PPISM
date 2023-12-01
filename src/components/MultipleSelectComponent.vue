@@ -6,7 +6,6 @@
     <q-select
       :model-value="modelValue"
       :options="optionsList"
-      @update:modelValue="(value) => $emit('update:modelValue', v)"
       v-bind="$attrs"
       label="Wybierz"
       outlined

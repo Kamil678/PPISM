@@ -176,32 +176,43 @@
           alt="ad" />
         Dodaj nową operację
       </button-component>
-      <div v-if="hasAddAssemblySequenceGraph" v-for="action in selectOperation.allActions" class="select-actions-sequence-graph">
-        <multiple-select-component
-          v-model="action.assemblySequenceGraphAfter"
-          :options-list="selectOperation.allActions"
-          option-label="actionContent"
-          is-filter>
+      <div v-if="hasAddAssemblySequenceGraph" class="select-actions-sequence-graph">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
           <div>
-            Wybierz czynność
-            <tooltip-component
-              :tooltip-text="`Wybierz czynność, którą należy wykonać przed ${action.actionContent}`" />
+            <multiple-select-component
+              v-model="selectOperation.assemblySequenceGraph"
+              :options-list="selectOperation.allActions"
+              option-label="actionContent"
+              is-filter
+              style="margin-bottom: 30px;">
+              <div>
+                Wybierz czynności od których chcesz zacząć
+                <tooltip-component
+                  :tooltip-text="`Wybierz czynność, takie których nie poprzedza żadna inna czynność`" />
+              </div>
+            </multiple-select-component>
+            <div v-if="selectOperation.assemblySequenceGraph.length > 0" v-for="action in selectOperation.assemblySequenceGraph">
+              <multiple-select-component
+                v-model="action.actionsAfter"
+                :options-list="selectOperation.allActions"
+                option-label="actionContent"
+                is-filter>
+                <div>
+                  Wybierz w odpowiedniej kolejności, czynności wykonywane po {{ action.actionContent }}
+                  <!-- <tooltip-component
+                :tooltip-text="`Wybierz czynność, którą należy wykonać po ${action.actionContent}`" /> -->
+                </div>
+              </multiple-select-component>
+            </div>
           </div>
-        </multiple-select-component>
-        <vue-mermaid-string v-if="hasAddAssemblySequenceGraph" class="graph" :value="`
-                      flowchart LR 
-                    A[Czynność przed]-->id${action.action}((${action.action}))-->B[Czynność po]`" />
-        <multiple-select-component
-          v-model="action.assemblySequenceGraphBefore"
-          :options-list="selectOperation.allActions"
-          option-label="actionContent"
-          is-filter>
-          <div>
-            Wybierz czynność
-            <tooltip-component
-              :tooltip-text="`Wybierz czynność, którą należy wykonać po ${action.actionContent}`" />
-          </div>
-        </multiple-select-component>
+          <vue-mermaid-string v-if="selectOperation.textToSequenceGraph" :value="selectOperation.textToSequenceGraph" />
+        </div>
+        <div style="display: flex; align-items: center; justify-content: end;">
+          <button-component flat @click="cancelAddAssemblySequenceGraph" style="padding-left: 0; margin-right: 10px;">Anuluj</button-component>
+          <button-component outline @click="closeAddAssemblySequenceGraph" style="margin-right: 10px;">Zamknij</button-component>
+          <button-component v-if="selectOperation.textToSequenceGraph === ''" @click="createAssemblySequenceGraph">Stwórz graf</button-component>
+          <button-component v-else @click="createAssemblySequenceGraph">Edytuj graf</button-component>
+        </div>
       </div>
       <div v-if="isAddNewOperation" class="add-operation-wrap">
         <input-component
@@ -594,8 +605,7 @@ const returnAllActions = (procedures) => {
       action.id = localAllActions.length + 1;
       action.generalActionNumber = localAllActions.length + 1
       action.action = localAllActions.length + 1
-      action.assemblySequenceGraphBefore = null;
-      action.assemblySequenceGraphAfter = null;
+      action.actionsAfter = null
       localAllActions.push(toRaw(action));
     })
   })
@@ -615,11 +625,7 @@ const addNewOperation = () => {
       Nt: newOperation.value.Nt,
       procedures: newOperation.value.procedures,
       allActions: returnAllActions(newOperation.value.procedures),
-      // assemblySequenceGraph: returnAllActions(newOperation.value.procedures).map(action => {
-      //   return {
-
-      //   }
-      // })
+      assemblySequenceGraph: []
     }));
 
     isAddNewOperation.value = false;
@@ -688,6 +694,8 @@ const onClickEditOperation = () => {
     tj: newOperation.value.tj,
     Nt: newOperation.value.Nt,
     procedures: newOperation.value.procedures,
+    allActions: returnAllActions(newOperation.value.procedures),
+    assemblySequenceGraph: []
   }
 
   operations.value.splice(index, 1, updatedOperation)
@@ -701,8 +709,44 @@ const showAddAssemblySequenceGraph = (operationId) => {
   selectOperation.value = operations.value[operationId - 1];
   hasAddAssemblySequenceGraph.value = true
 }
-const addAssemblySequenceGraph = (id) => {
 
+const createAssemblySequenceGraph = (id) => {
+  let diagram = `
+  flowchart LR `
+
+  selectOperation.value.assemblySequenceGraph.forEach(action => {
+    let text = `
+    id${action.action}((${action.action}))-->`
+    if (action.actionsAfter.length > 0) {
+      action.actionsAfter.forEach((afterAction, index) => {
+        if (index === action.actionsAfter.length - 1) {
+          text += `id${afterAction.action}((${afterAction.action}))`
+        } else {
+          text += `id${afterAction.action}((${afterAction.action}))-->`
+        }
+      })
+    }
+    diagram += text
+  })
+  selectOperation.value.textToSequenceGraph = diagram;
+  console.log(operations.value)
+  return diagram
+
+}
+
+const cancelAddAssemblySequenceGraph = () => {
+  if (selectOperation.value.textToSequenceGraph === '') {
+    selectOperation.value.assemblySequenceGraph = [];
+  }
+  selectOperation.value = null;
+  hasAddAssemblySequenceGraph.value = false
+  console.log(operations);
+}
+
+const closeAddAssemblySequenceGraph = () => {
+  selectOperation.value = null;
+  hasAddAssemblySequenceGraph.value = false
+  console.log(operations);
 }
 
 //interactions with procedures
@@ -1056,19 +1100,28 @@ const editTechnologicalDocumentations = () => {
 
 .select-actions-sequence-graph {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0 10px;
+  flex-direction: column;
+  //align-items: center;
+  //justify-content: space-between;
+  gap: 10px 0;
   margin-bottom: 10px;
 
   .basic-multiple-select {
-    width: 30%;
+    width: 100%;
   }
 }
 
-.graph {
-  svg {
-    width: 100%;
+svg {
+  width: 100%;
+
+  .nodes {
+    circle {
+      fill: #fff !important;
+      stroke: #000 !important;
+      color: #000 !important;
+      width: 20px !important;
+      height: 20px !important;
+    }
   }
 }
 </style>

@@ -60,6 +60,13 @@
           </div>
         </div>
       </div>
+      <h3 style="font-size: 24px; line-height: 26px; margin: 50px 0 20px 0">
+        Podgląd grafów następstw montażowych:
+      </h3>
+      <div v-for="operation in operations">
+        <p>{{ operation.id }}. {{ operation.operationContent }}</p>
+        <vue-mermaid-string v-if="operation.textToSequenceGraph" :value="operation.textToSequenceGraph" />
+      </div>
     </div>
   </div>
 </template>
@@ -69,6 +76,7 @@ import { useQuasar } from "quasar";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import createInstance from "../services/apiBase";
+import VueMermaidString from 'vue-mermaid-string'
 
 const $q = useQuasar();
 const route = useRoute();
