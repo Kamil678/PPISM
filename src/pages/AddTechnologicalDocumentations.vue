@@ -198,8 +198,6 @@
                 style="width: 100%;">
                 <div>
                   Wybierz w odpowiedniej kolejności, czynności wykonywane po {{ action.actionContent }}
-                  <!-- <tooltip-component
-                :tooltip-text=" `Wybierz czynność, którą należy wykonać po ${action.actionContent}`" /> -->
                 </div>
               </multiple-select-component>
             </div>
@@ -1070,13 +1068,6 @@ const editTechnologicalDocumentations = () => {
     width: 50%;
     display: flex;
     flex-direction: column;
-
-    .separator {
-      width: 100%;
-      height: 1px;
-      margin: 10px 0 20px 0;
-      background-color: $dark-grey;
-    }
 
     .procedure-title {
       font-size: 18px;

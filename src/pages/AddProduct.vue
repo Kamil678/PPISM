@@ -4,17 +4,48 @@
       <input-component
         v-model="newProduct.name"
         placeholder="Wpisz nazwę wyrobu gotowego"
-        class="mb-20">Podaj nazwę wyrobu gotowego:</input-component>
+        class="mb-10">Podaj nazwę wyrobu gotowego:</input-component>
       <input-component
         v-model="newProduct.numberFromAssemblyDraw"
         type="number"
         placeholder="Wpisz numer rysunku złożeniowego"
-        class="mb-20">Podaj numer rysunku złożeniowego:</input-component>
+        class="mb-10">Podaj numer rysunku złożeniowego:</input-component>
       <input-component
         v-model="newProduct.seriesSize"
         type="number"
         placeholder="Wpisz wielkość serii"
         class="mb-20">Podaj wielkość serii:</input-component>
+      <div class="separator"></div>
+      <input-component
+        v-model="newProduct.yearlyProductionProgram"
+        type="number"
+        placeholder="Wpisz roczny program produkcji"
+        class="mb-10">Roczny program produkcji [szt/rok]:</input-component>
+      <input-component
+        v-model="newProduct.DpT"
+        type="number"
+        placeholder="Wpisz ilość dni roboczych w tygodniu"
+        class="mb-10">Ilość dni roboczych w tygodniu (DpT) [dni/tyg]:</input-component>
+      <input-component
+        v-model="newProduct.IZ"
+        type="number"
+        placeholder="Wpisz ilość zmian na dzień roboczy"
+        class="mb-10">Ilość zmian na dzień roboczy (IZ) [zm]:</input-component>
+      <input-component
+        v-model="newProduct.TnZ"
+        type="number"
+        placeholder="Wpisz ilość godzin na zmianę"
+        class="mb-10">Ilość godzin na zmianę (TnZ) [h/zm]:</input-component>
+      <input-component
+        v-model="newProduct.TnP"
+        type="number"
+        placeholder="Wpisz planowane przerwy"
+        class="mb-10">Planowane przerwy (TnP) [h/zm]:</input-component>
+      <input-component
+        v-model="newProduct.DpR"
+        type="number"
+        placeholder="Wpisz dni robocze w roku"
+        class="mb-10">Dni roboczych w roku (DpR) [dni]:</input-component>
       <div class="mb-20" style="display: flex; align-items: center; justify-content: space-between;">
         <div style=" max-width: 80%;">
           <p>Części:</p>
@@ -130,6 +161,12 @@ const newProduct = ref({
   name: '',
   numberFromAssemblyDraw: 0,
   seriesSize: 0,
+  yearlyProductionProgram: Number(0),
+  DpT: Number(0),
+  IZ: Number(0),
+  TnZ: Number(0),
+  TnP: Number(0),
+  DpR: Number(0),
   parts: [],
   projectId: null
 });
@@ -231,9 +268,32 @@ const validatePart = () => {
 //Interactions with product
 const addProduct = async () => {
   if (validateForm()) {
+    const endNewProduct = {
+      name: newProduct.value.name,
+      numberFromAssemblyDraw: newProduct.value.numberFromAssemblyDraw,
+      seriesSize: newProduct.value.seriesSize,
+      yearlyProductionProgram: Number(newProduct.value.yearlyProductionProgram),
+      DpT: Number(newProduct.value.DpT),
+      IZ: Number(newProduct.value.IZ),
+      TnZ: Number(newProduct.value.TnZ),
+      TnP: Number(newProduct.value.TnP),
+      DpR: Number(newProduct.value.DpR),
+      Fd: newProduct.value.DpR * newProduct.value.TnZ * newProduct.value.IZ,
+      Fe: newProduct.value.DpR * (newProduct.value.TnZ - newProduct.value.TnP) * newProduct.value.IZ,
+      Pdz: newProduct.value.yearlyProductionProgram / newProduct.value.DpR,
+      parts: newProduct.value.parts,
+      projectId: newProduct.value.projectId
+    }
+
+    endNewProduct.p = Math.round((newProduct.value.yearlyProductionProgram / endNewProduct.Fe) * 100) / 100;
+    endNewProduct.TTh = endNewProduct.Fe / newProduct.value.yearlyProductionProgram;
+    endNewProduct.TTm = endNewProduct.TTh * 60;
+    endNewProduct.TTs = endNewProduct.TTm * 60;
+    endNewProduct.Pzm = endNewProduct.Pdz / 3;
+
     try {
       const instance = createInstance();
-      instance.post("product", newProduct.value);
+      instance.post("product", endNewProduct);
       router.replace("/projects");
     } catch (err) {
       console.log(err);
@@ -246,13 +306,42 @@ const addProduct = async () => {
       color: "red",
     });
   }
+
 };
 
 const editProduct = async () => {
   if (validateForm()) {
+    const endEditProduct = {
+      name: newProduct.value.name,
+      numberFromAssemblyDraw: newProduct.value.numberFromAssemblyDraw,
+      seriesSize: newProduct.value.seriesSize,
+      yearlyProductionProgram: newProduct.value.yearlyProductionProgram,
+      DpT: newProduct.value.DpT,
+      IZ: newProduct.value.IZ,
+      TnZ: newProduct.value.TnZ,
+      TnP: newProduct.value.TnP,
+      DpR: newProduct.value.DpR,
+      Fd: newProduct.value.DpR * newProduct.value.TnZ * newProduct.value.IZ,
+      Fe: newProduct.value.DpR * (newProduct.value.TnZ - newProduct.value.TnP) * newProduct.value.IZ,
+      p: Math.round((newProduct.value.yearlyProductionProgram / newProduct.value.FE) * 100) / 100,
+      TTh: newProduct.value.FE / newProduct.value.yearlyProductionProgram,
+      TTm: newProduct.value.TTh * 60,
+      TTs: newProduct.value.TTm * 60,
+      Pdz: newProduct.value.yearlyProductionProgram / newProduct.value.DpR,
+      Pzm: newProduct.value.Pdz / 3,
+      parts: newProduct.value.parts,
+      projectId: newProduct.value.projectId
+    }
+
+    endEditProduct.p = Math.round((newProduct.value.yearlyProductionProgram / endEditProduct.Fe) * 100) / 100;
+    endEditProduct.TTh = endEditProduct.Fe / newProduct.value.yearlyProductionProgram;
+    endEditProduct.TTm = endEditProduct.TTh * 60;
+    endEditProduct.TTs = endEditProduct.TTm * 60;
+    endEditProduct.Pzm = endEditProduct.Pdz / 3;
+
     try {
       const instance = createInstance();
-      instance.put(`product/${editProductId.value}`, newProduct.value);
+      instance.put(`product/${editProductId.value}`, endEditProduct);
       router.replace("/projects");
     } catch (err) {
       console.log(err);
@@ -272,7 +361,13 @@ const validateForm = () => {
     newProduct.value.name === '' ||
     newProduct.value.numberFromAssemblyDraw === 0 ||
     newProduct.value.seriesSize === 0 ||
-    newProduct.value.parts.length === 0
+    newProduct.value.parts.length === 0 ||
+    newProduct.value.yearlyProductionProgram === 0 ||
+    newProduct.value.DpT === 0 ||
+    newProduct.value.IZ === 0 ||
+    newProduct.value.TnZ === 0 ||
+    newProduct.value.TnP === 0 ||
+    newProduct.value.DpR === 0
   ) {
     return false;
   } else {
