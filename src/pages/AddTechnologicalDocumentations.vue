@@ -178,29 +178,28 @@
       </button-component>
       <div v-if="hasAddAssemblySequenceGraph" class="select-actions-sequence-graph">
         <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div>
+          <div style="display: flex;flex-direction: column; gap: 10px 0; width: 50%;">
             <multiple-select-component
               v-model="selectOperation.assemblySequenceGraph"
               :options-list="selectOperation.allActions"
               option-label="actionContent"
               is-filter
-              style="margin-bottom: 30px;">
+              style="margin-bottom: 20px;">
               <div>
                 Wybierz czynności od których chcesz zacząć
-                <tooltip-component
-                  :tooltip-text="`Wybierz czynność, takie których nie poprzedza żadna inna czynność`" />
               </div>
             </multiple-select-component>
-            <div v-if="selectOperation.assemblySequenceGraph.length > 0" v-for="action in selectOperation.assemblySequenceGraph">
+            <div v-if="selectOperation.assemblySequenceGraph.length > 0" v-for="action in selectOperation.assemblySequenceGraph" style="width: 100%;">
               <multiple-select-component
                 v-model="action.actionsAfter"
                 :options-list="selectOperation.allActions"
                 option-label="actionContent"
-                is-filter>
+                is-filter
+                style="width: 100%;">
                 <div>
                   Wybierz w odpowiedniej kolejności, czynności wykonywane po {{ action.actionContent }}
                   <!-- <tooltip-component
-                :tooltip-text="`Wybierz czynność, którą należy wykonać po ${action.actionContent}`" /> -->
+                :tooltip-text=" `Wybierz czynność, którą należy wykonać po ${action.actionContent}`" /> -->
                 </div>
               </multiple-select-component>
             </div>
@@ -237,12 +236,12 @@
           type="number"
           placeholder="Wpisz czas jednostkowy"
           class="project-title mb-10">Czas jednostkowy (tj):</input-component>
-
+        <!-- 
         <input-component
           v-model="newOperation.Nt"
           type="number"
           placeholder="Wpisz norme czasu"
-          class="project-title mb-10">Norma czasu (Nt):</input-component>
+          class="project-title mb-10">Norma czasu (Nt):</input-component> -->
         <div class="separator"></div>
 
         <!-- Adding procedure -->
@@ -534,7 +533,7 @@ onMounted(async () => {
     positionSymbol: "",
     tpz: 0,
     tj: 0,
-    Nt: 0,
+    //Nt: 0,
     procedures: [
       {
         id: 1,
@@ -565,7 +564,7 @@ const clearAllFields = () => {
   newOperation.value.positionSymbol = "";
   newOperation.value.tpz = 0;
   newOperation.value.tj = 0;
-  newOperation.value.Nt = 0;
+  //newOperation.value.Nt = 0;
   newOperation.value.procedures = [
     {
       id: 1,
@@ -622,7 +621,7 @@ const addNewOperation = () => {
       positionSymbol: newOperation.value.positionSymbol,
       tpz: newOperation.value.tpz,
       tj: newOperation.value.tj,
-      Nt: newOperation.value.Nt,
+      Nt: Math.round(newOperation.value.tpz + project.value.product.seriesSize * (newOperation.value.tj / 60)),
       procedures: newOperation.value.procedures,
       allActions: returnAllActions(newOperation.value.procedures),
       assemblySequenceGraph: []
@@ -692,7 +691,7 @@ const onClickEditOperation = () => {
     positionSymbol: newOperation.value.positionSymbol,
     tpz: newOperation.value.tpz,
     tj: newOperation.value.tj,
-    Nt: newOperation.value.Nt,
+    Nt: Math.round(newOperation.value.tpz + project.value.product.seriesSize * (newOperation.value.tj / 60)),
     procedures: newOperation.value.procedures,
     allActions: returnAllActions(newOperation.value.procedures),
     assemblySequenceGraph: []
