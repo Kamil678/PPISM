@@ -161,12 +161,12 @@ const newProduct = ref({
   name: '',
   numberFromAssemblyDraw: 0,
   seriesSize: 0,
-  yearlyProductionProgram: Number(0),
-  DpT: Number(0),
-  IZ: Number(0),
-  TnZ: Number(0),
-  TnP: Number(0),
-  DpR: Number(0),
+  yearlyProductionProgram: 0,
+  DpT: 0,
+  IZ: 0,
+  TnZ: 0,
+  TnP: 0,
+  DpR: 0,
   parts: [],
   projectId: null
 });
@@ -189,6 +189,12 @@ onMounted(async () => {
       newProduct.value.name = result.data.product.name;
       newProduct.value.numberFromAssemblyDraw = result.data.product.numberFromAssemblyDraw
       newProduct.value.seriesSize = result.data.product.seriesSize
+      newProduct.value.yearlyProductionProgram = result.data.product.yearlyProductionProgram
+      newProduct.value.DpT = result.data.product.DpT
+      newProduct.value.IZ = result.data.product.IZ
+      newProduct.value.TnZ = result.data.product.TnZ
+      newProduct.value.TnP = result.data.product.TnP
+      newProduct.value.DpR = result.data.product.DpR
       newProduct.value.parts = result.data.product.parts;
     } catch (err) {
       console.log(err);
@@ -306,8 +312,9 @@ const addProduct = async () => {
       color: "red",
     });
   }
-
 };
+
+console.log(newProduct.value)
 
 const editProduct = async () => {
   if (validateForm()) {
@@ -362,8 +369,8 @@ const validateForm = () => {
     newProduct.value.numberFromAssemblyDraw === 0 ||
     newProduct.value.seriesSize === 0 ||
     newProduct.value.parts.length === 0 ||
-    newProduct.value.yearlyProductionProgram === 0 ||
-    newProduct.value.DpT === 0 ||
+    newProduct.value.yearlyProductionProgram === Number(0) ||
+    newProduct.value.DpT === Number(0) ||
     newProduct.value.IZ === 0 ||
     newProduct.value.TnZ === 0 ||
     newProduct.value.TnP === 0 ||

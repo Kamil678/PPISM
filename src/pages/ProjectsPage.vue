@@ -137,6 +137,16 @@
               <div v-else class="flex justify-end no-wrap" style="grid-gap: 10px">
                 <button-with-icon
                   is-tooltip
+                  tooltip-text="Podgląd czasów"
+                  @click="router.replace(`${props.row._id}/preview-time?id=` + props.row.product)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/eye-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
                   tooltip-text="Edytuj wyrób"
                   @click="router.replace(`${props.row._id}/add-product?id=${props.row.product}`)"
                   class="hide-menu">
