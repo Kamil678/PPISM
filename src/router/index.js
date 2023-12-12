@@ -15,6 +15,7 @@ import AddTechnologicalDocumentations from "../pages/AddTechnologicalDocumentati
 import PreviewTechnologicalCard from "../pages/PreviewTechnologicalCard.vue";
 import PreviewInstructionCards from "../pages/PreviewInstructionCards.vue";
 import PreviewTime from "../pages/PreviewTime.vue";
+import PreviewParts from "../pages/PreviewParts.vue";
 import { useUserStore } from "../store/user";
 
 const routes = [
@@ -55,6 +56,11 @@ const routes = [
         path: "/:projectId/preview-time",
         name: "preview-time",
         component: PreviewTime,
+      },
+      {
+        path: "/:projectId/preview-parts",
+        name: "preview-parts",
+        component: PreviewParts,
       },
       {
         path: "/:projectId/add-assembly-structure",

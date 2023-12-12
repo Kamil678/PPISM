@@ -134,7 +134,7 @@
             <p>[szt/h]</p>
           </div>
         </div>
-        <div>
+        <div v-if="unit === '[h/szt]'">
           <div>
             <p>Czas taktu godzinowy</p>
           </div>
@@ -145,10 +145,12 @@
             <p>{{ productTimes.TTh }}</p>
           </div>
           <div>
-            <p>[h/szt]</p>
+            <div style="width: 100%; display: flex; align-items: center; justify-content: center; border-bottom: none;">
+              <q-select v-model="unit" :options="units" class="select-unit" />
+            </div>
           </div>
         </div>
-        <div>
+        <div v-else-if="unit === '[min/szt]'">
           <div>
             <p>Czas taktu minutowy</p>
           </div>
@@ -159,10 +161,12 @@
             <p>{{ productTimes.TTm }}</p>
           </div>
           <div>
-            <p>[min/szt]</p>
+            <div style="width: 100%; display: flex; align-items: center; justify-content: center; border-bottom: none;">
+              <q-select v-model="unit" :options="units" class="select-unit" />
+            </div>
           </div>
         </div>
-        <div>
+        <div v-else>
           <div>
             <p>Czas taktu sekundowy</p>
           </div>
@@ -173,7 +177,9 @@
             <p>{{ productTimes.TTs }}</p>
           </div>
           <div>
-            <p>[sek/szt]</p>
+            <div style="width: 100%; display: flex; align-items: center; justify-content: center; border-bottom: none;">
+              <q-select v-model="unit" :options="units" class="select-unit" />
+            </div>
           </div>
         </div>
         <div>
@@ -249,6 +255,9 @@ onMounted(async () => {
     }
   }
 });
+
+const units = ['[h/szt]', '[min/szt]', '[s/szt]']
+const unit = ref('[h/szt]')
 </script>
 <style lang="scss">
 .preview-time-wrap {
@@ -302,6 +311,43 @@ onMounted(async () => {
         p {
           width: 100%;
         }
+      }
+    }
+
+    .select-unit {
+      height: 21px;
+      //width: 50%;
+
+      .q-field__inner {
+        display: block;
+      }
+
+      .q-field__control {
+        width: auto !important;
+        height: 21px;
+        min-height: 21px;
+        border-bottom: none !important;
+        justify-content: space-between;
+
+        &::before {
+          border-bottom: none !important;
+        }
+
+        .q-field__control-container {
+          border-bottom: none !important;
+          border-right: none !important;
+        }
+
+        .q-field__native {
+          min-height: 21px;
+          border-bottom: none;
+        }
+      }
+
+      .q-field__append {
+        height: 21px;
+        border-bottom: none;
+        //padding-left: 45px;
       }
     }
   }

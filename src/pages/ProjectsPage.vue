@@ -147,6 +147,16 @@
                 </button-with-icon>
                 <button-with-icon
                   is-tooltip
+                  tooltip-text="Podgląd wszystkich części"
+                  @click="router.replace(`${props.row._id}/preview-parts?id=` + props.row.product)"
+                  class="hide-menu">
+                  <img
+                    src="../assets/eye-ico.svg"
+                    style="width: 18px; height: 18px"
+                    alt="edit" />
+                </button-with-icon>
+                <button-with-icon
+                  is-tooltip
                   tooltip-text="Edytuj wyrób"
                   @click="router.replace(`${props.row._id}/add-product?id=${props.row.product}`)"
                   class="hide-menu">
