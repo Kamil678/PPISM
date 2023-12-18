@@ -10,6 +10,32 @@
         type="number"
         placeholder="Wpisz numer rysunku złożeniowego"
         class="mb-10">Podaj numer rysunku złożeniowego:</input-component>
+      <q-file
+        v-model="uploadImage"
+        accept=".jpg, image/*"
+        filled
+        label="Wybierz lub przeciągnij plik"
+        class="upload-img"
+        @update:model-value="configureImage">
+        <template v-slot:prepend>
+          <q-icon>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#007FFF" fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+              <path d="M7 9l5 -5l5 5" />
+              <path d="M12 4l0 12" />
+            </svg>
+          </q-icon>
+        </template>
+        <!-- <template v-slot:append>
+          <q-icon name="cancel" v-if="question.image.id !== null" @click.stop.prevent="isRemoveImage = true, addImage(question.uploadImage, question.id, index, question.isNew)"
+            class="cursor-pointer"></q-icon>
+        </template> -->
+      </q-file>
+      {{ newProduct }}
+      <img v-if="newProduct.imageProduct" crossorigin="anonymous" :src="`http://localhost:8000/${newProduct.imageProduct}`" alt="Rysunek złożeniowy">
       <input-component
         v-model="newProduct.seriesSize"
         type="number"
@@ -157,9 +183,11 @@ import createInstance from "../services/apiBase";
 const $q = useQuasar();
 const route = useRoute();
 
+const uploadImage = ref(null)
 const newProduct = ref({
   name: '',
   numberFromAssemblyDraw: 0,
+  imageProduct: null,
   seriesSize: 0,
   yearlyProductionProgram: 0,
   DpT: 0,
@@ -170,6 +198,20 @@ const newProduct = ref({
   parts: [],
   projectId: null
 });
+
+const configureImage = async () => {
+  const formData = new FormData()
+  formData.append('imageProduct', uploadImage.value)
+
+  try {
+    const instance = createInstance();
+    const response = await instance.post("upload-image", formData);
+    console.log(response)
+    newProduct.value.imageProduct = response.data.imageProduct
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 const projectId = ref(null);
 const editProductId = ref(null);
@@ -188,6 +230,7 @@ onMounted(async () => {
       const result = await instance.get("/product/" + editProductId.value);
       newProduct.value.name = result.data.product.name;
       newProduct.value.numberFromAssemblyDraw = result.data.product.numberFromAssemblyDraw
+      newProduct.value.imageProduct = result.data.product.imageProduct
       newProduct.value.seriesSize = result.data.product.seriesSize
       newProduct.value.yearlyProductionProgram = result.data.product.yearlyProductionProgram
       newProduct.value.DpT = result.data.product.DpT
@@ -277,6 +320,7 @@ const addProduct = async () => {
     const endNewProduct = {
       name: newProduct.value.name,
       numberFromAssemblyDraw: newProduct.value.numberFromAssemblyDraw,
+      imageProduct: newProduct.value.imageProduct,
       seriesSize: newProduct.value.seriesSize,
       yearlyProductionProgram: Number(newProduct.value.yearlyProductionProgram),
       DpT: Number(newProduct.value.DpT),
@@ -321,6 +365,7 @@ const editProduct = async () => {
     const endEditProduct = {
       name: newProduct.value.name,
       numberFromAssemblyDraw: newProduct.value.numberFromAssemblyDraw,
+      imageProduct: newProduct.value.imageProduct,
       seriesSize: newProduct.value.seriesSize,
       yearlyProductionProgram: newProduct.value.yearlyProductionProgram,
       DpT: newProduct.value.DpT,
@@ -349,7 +394,7 @@ const editProduct = async () => {
     try {
       const instance = createInstance();
       instance.put(`product/${editProductId.value}`, endEditProduct);
-      router.replace("/projects");
+      //router.replace("/projects");
     } catch (err) {
       console.log(err);
     }
@@ -410,6 +455,55 @@ const validateForm = () => {
 
   .project-title {
     margin-bottom: 20px;
+  }
+
+  .upload-img {
+    width: 220px;
+    border: 2px dashed #D1D1D1;
+    margin-bottom: 10px;
+
+    .q-field__control {
+      background: transparent;
+      min-height: 40px;
+      height: 40px;
+
+      .q-field__control-container {
+        padding-top: 20px;
+      }
+
+      .q-field__marginal {
+        height: 40px;
+      }
+
+      .q-field__native {
+        min-height: 18px;
+        padding-bottom: 0;
+      }
+
+      .q-field__label {
+        font-size: 12px;
+        color: var(--q-primary);
+        top: 12px;
+      }
+
+      &::before {
+        background: transparent;
+      }
+    }
+
+    &.q-field--float .q-field__label {
+      transform: translateY(-50%) scale(0.75);
+    }
+
+    &.q-field--filled .q-field__control {
+      &::after {
+        height: 0;
+      }
+
+      &::before {
+        border: none;
+      }
+    }
   }
 
   .actions-buttons {
