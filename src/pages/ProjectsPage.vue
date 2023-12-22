@@ -18,6 +18,7 @@
       dense
       binary-state-sort
       flat
+      no-data-label="Brak projektów"
       class="projects-table">
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -117,7 +118,7 @@
             </div>
           </q-td>
         </q-tr>
-        <q-tr v-show="props.expand" :props="props">
+        <q-tr v-show="props.rowIndex + 1 === projects.length ? !props.expand : props.expand" :props="props">
           <q-td colspan="100%" class="second-row">
             <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
@@ -243,7 +244,6 @@
             <div class="document-wrap" style="display: flex; align-items: center; justify-content: space-between;">
               <div>
                 <p>Graficzny plan montażu:</p>
-                <!-- <p v-if="newProject.parts.length === 0">Brak</p> -->
               </div>
               <button-component
                 v-if="!props.row.graphicAssemblyPlan"
@@ -510,10 +510,10 @@ function getNameBySlug(slug) {
 
 //Delete project
 const isDelete = ref(false);
-const confirmDeleteProject = async (id) => {
+async function confirmDeleteProject(id) {
   try {
     const instance = createInstance();
-    instance.delete("project/" + id);
+    await instance.delete("project/" + id);
     isDelete.value = false;
     await getProjects();
   } catch (err) {
@@ -534,10 +534,9 @@ const isDeleteAssemblyStructure = ref(false)
 const confirmDeleteAssemblyStructure = async (id) => {
   try {
     const instance = createInstance();
-    instance.delete("assembly-structure/" + id);
+    await instance.delete("assembly-structure/" + id);
     isDeleteAssemblyStructure.value = false;
     await getProjects();
-    window.location.reload()
   } catch (err) {
     console.log(err);
   }
@@ -548,10 +547,9 @@ const showDeleteProductModal = ref(false);
 const deleteProduct = async (id) => {
   try {
     const instance = createInstance();
-    instance.delete("product/" + id);
+    await instance.delete("product/" + id);
     showDeleteProductModal.value = false;
     await getProjects();
-    window.location.reload()
   } catch (err) {
     console.log(err);
   }
@@ -566,33 +564,26 @@ const isDeleteGraphicAssemblyPlan = ref(false)
 const confirmDeleteGraphicAssemblyPlan = async (id) => {
   try {
     const instance = createInstance();
-    instance.delete("graphic-assembly-plan/" + id);
+    await instance.delete("graphic-assembly-plan/" + id);
     isDeleteGraphicAssemblyPlan.value = false;
     await getProjects();
-    window.location.reload()
   } catch (err) {
     console.log(err);
   }
 };
-
-//Interactions with assembly tasks table
-const assemblyTasksTable = ref(null);
 
 //Interactions with technological documentations
 const isDeleteTechnologicalDocumentations = ref(false)
 const confirmDeleteTechnologicalDocumentations = async (id) => {
   try {
     const instance = createInstance();
-    instance.delete("technological-documentations/" + id);
+    await instance.delete("technological-documentations/" + id);
     isDeleteTechnologicalDocumentations.value = false;
     await getProjects();
-    window.location.reload()
   } catch (err) {
     console.log(err);
   }
 };
-//Interactions with assembly tasks table
-const instructionCards = ref(null);
 </script>
 <style lang="scss">
 .projects-page {

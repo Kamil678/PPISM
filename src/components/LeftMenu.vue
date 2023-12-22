@@ -1,11 +1,5 @@
 <template>
   <div :class="closeMenu || isSmallScreen ? 'sidebar close' : 'sidebar'">
-    <!-- <a href="#" class="logo">
-      <i class="bx bx-code-alt"></i>
-      <div class="logo-name">
-        <span>PPISM</span>
-      </div>
-    </a> -->
     <logo-component />
     <ul class="side-menu">
       <li class="active">
@@ -16,9 +10,6 @@
       </li>
       <li>
         <router-link to="/user" class="router-link"><i class="bx bx-user"></i>Moje konto</router-link>
-      </li>
-      <li>
-        <router-link to="/all-components" class="router-link"><i class="bx bxs-component"></i>Komponenty</router-link>
       </li>
     </ul>
     <ul class="side-menu" style="margin-top: 50px">
@@ -40,11 +31,6 @@ import router from "../router";
 
 const userStore = useUserStore();
 
-const logout = () => {
-  userStore.logout();
-  router.push("/auth");
-};
-
 defineProps({
   closeMenu: Boolean,
 });
@@ -53,6 +39,11 @@ const isSmallScreen = ref(false)
 onMounted(() => {
   isSmallScreen.value = document.body.clientWidth <= 992 ? true : false
 })
+
+const logout = () => {
+  userStore.logout();
+  router.push("/auth");
+};
 </script>
 
 <style lang="scss">
@@ -98,6 +89,10 @@ onMounted(() => {
       li {
         padding: 0;
       }
+    }
+
+    .logout .bx {
+      color: #d32f2f !important;
     }
   }
 

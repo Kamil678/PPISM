@@ -29,13 +29,8 @@
             </svg>
           </q-icon>
         </template>
-        <!-- <template v-slot:append>
-          <q-icon name="cancel" v-if="question.image.id !== null" @click.stop.prevent="isRemoveImage = true, addImage(question.uploadImage, question.id, index, question.isNew)"
-            class="cursor-pointer"></q-icon>
-        </template> -->
       </q-file>
-      {{ newProduct }}
-      <img v-if="newProduct.imageProduct" crossorigin="anonymous" :src="`http://localhost:8000/${newProduct.imageProduct}`" alt="Rysunek złożeniowy">
+      <img v-if="newProduct.imageProduct" :src="newProduct.imageProduct" alt="Rysunek złożeniowy" width="600">
       <input-component
         v-model="newProduct.seriesSize"
         type="number"
@@ -200,17 +195,16 @@ const newProduct = ref({
 });
 
 const configureImage = async () => {
-  const formData = new FormData()
-  formData.append('imageProduct', uploadImage.value)
-
-  try {
-    const instance = createInstance();
-    const response = await instance.post("upload-image", formData);
-    console.log(response)
-    newProduct.value.imageProduct = response.data.imageProduct
-  } catch (err) {
-    console.log(err);
-  }
+  newProduct.value.imageProduct = await new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(uploadImage.value);
+    fileReader.onload = () => {
+      resolve(fileReader.result)
+    }
+    fileReader.onerror = (error) => {
+      reject(error)
+    }
+  })
 }
 
 const projectId = ref(null);
@@ -394,7 +388,7 @@ const editProduct = async () => {
     try {
       const instance = createInstance();
       instance.put(`product/${editProductId.value}`, endEditProduct);
-      //router.replace("/projects");
+      router.replace("/projects");
     } catch (err) {
       console.log(err);
     }

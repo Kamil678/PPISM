@@ -14,12 +14,6 @@
           v-model="password"
           type="password"
           placeholder="Podaj hasło">Hasło:</input-component>
-        <!-- <input-component
-          v-model="repeatPassword"
-          type="password"
-          placeholder="Powtórz hasło"
-          >Powtórz hasło:</input-component
-        > -->
         <button-component @click="submitRegisterForm">Utwórz konto</button-component>
         <a href="#" @click="isSignIn = true">Masz już konto? Zaloguj sie</a>
       </form>
@@ -46,14 +40,14 @@
           :style="!isSignIn ? 'transform:translate(0,-50%)' : ''">
           <h2>Witaj ponownie!</h2>
           <p>Zaloguj się aby zobaczyć swoje projekty</p>
-          <button-component outline @click="isSignIn = true">Zaloguj się</button-component>
+          <button-component outline @click="isSignIn = true" style="margin-top: 20px;">Zaloguj się</button-component>
         </div>
         <div
           class="toggle-panel toggle-sign-up"
           :style="!isSignIn ? 'transform:translate(-200%,-50%)' : ''">
           <h2>Witaj!</h2>
           <p>Zarejestruj się aby w pełni korzystać z sytemu</p>
-          <button-component outline @click="isSignIn = false">Zarajestruj się</button-component>
+          <button-component outline @click="isSignIn = false" style="margin-top: 20px;">Zarajestruj się</button-component>
         </div>
       </div>
     </div>
@@ -62,13 +56,12 @@
 
 <script setup>
 import { ref } from "vue";
-import InputComponent from "../components/InputComponent.vue";
-import ButtonComponent from "../components/ButtonComponent.vue";
-import SelectComponent from "../components/SelectComponent.vue";
-//import { showErrorNotification } from "../services/Notifications";
 import { useUserStore } from "../store/user";
 import router from "../router";
 import { useQuasar } from "quasar";
+import InputComponent from "../components/InputComponent.vue";
+import ButtonComponent from "../components/ButtonComponent.vue";
+import SelectComponent from "../components/SelectComponent.vue";
 
 const $q = useQuasar();
 

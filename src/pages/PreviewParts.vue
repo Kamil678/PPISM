@@ -16,17 +16,17 @@
         {{ props.row.title }}
       </q-td>
       <template v-slot:body-cell-allPartsPerShift="props">
-        <q-td :props="props">
+        <q-td :props="props" class="green">
           {{ props.row.numberSameParts * Pzm }}
         </q-td>
       </template>
       <template v-slot:body-cell-totalMassPerShift="props">
-        <q-td :props="props">
+        <q-td :props="props" class="green">
           {{ props.row.numberSameParts * props.row.mass * Pzm }}
         </q-td>
       </template>
       <template v-slot:body-cell-totalVolumePerShift="props">
-        <q-td :props="props">
+        <q-td :props="props" class="green">
           {{ props.row.numberSameParts * props.row.volume * Pzm }}
         </q-td>
       </template>
@@ -116,21 +116,21 @@ const columns = [
     label: "Liczba wszystkich części na zmianę",
     align: "left",
     classes: "q-table--col-auto-width",
-    headerClasses: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width green",
   },
   {
     name: "totalMassPerShift",
     label: "Całkowita masa części na zmianę",
     align: "left",
     classes: "q-table--col-auto-width",
-    headerClasses: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width green",
   },
   {
     name: "totalVolumePerShift",
     label: "Całkowita objętość części na zmianę",
     align: "left",
     classes: "q-table--col-auto-width",
-    headerClasses: "q-table--col-auto-width",
+    headerClasses: "q-table--col-auto-width green",
   },
 ]
 </script>
@@ -142,6 +142,10 @@ const columns = [
 
   th {
     white-space: wrap !important;
+  }
+
+  .green {
+    background-color: rgba(115, 192, 102, 0.3);
   }
 }
 </style>

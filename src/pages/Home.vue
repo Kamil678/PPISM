@@ -5,8 +5,7 @@
       <div
         v-for="project in latestProjects"
         :key="project._id"
-        class="single-project"
-      >
+        class="single-project">
         <div>
           <p class="label">Tytuł:</p>
           <p>{{ project.title }}</p>
@@ -22,10 +21,11 @@
         <button-component
           outline
           @click="router.replace('/projects')"
-          class="show-more-btn"
-          >Zobacz szczegóły</button-component
-        >
+          class="show-more-btn">Zobacz szczegóły</button-component>
       </div>
+    </div>
+    <div v-else class="no-projects">
+      Brak projektów
     </div>
   </div>
 </template>
@@ -103,5 +103,12 @@ const getLatestProjects = async () => {
       align-self: center;
     }
   }
+}
+
+.no-projects {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
 }
 </style>
